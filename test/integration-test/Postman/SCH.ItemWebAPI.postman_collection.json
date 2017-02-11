@@ -1,0 +1,94 @@
+{
+	"variables": [],
+	"info": {
+		"name": "SCH.ItemWebAPI",
+		"_postman_id": "37ec717c-625e-83c4-e65e-eb2cd6935326",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Home page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{host}}/-/item/v1/?query=/sitecore/content/home",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Scitemwebapi-Username",
+						"value": "sitecore\\admin",
+						"description": ""
+					},
+					{
+						"key": "X-Scitemwebapi-Password",
+						"value": "b",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Home page comments",
+			"request": {
+				"url": "http://{{host}}/-/item/v1/?query=/sitecore/content/home/*",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Scitemwebapi-Username",
+						"value": "sitecore\\admin",
+						"description": ""
+					},
+					{
+						"key": "X-Scitemwebapi-Password",
+						"value": "b",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add Home page comment",
+			"request": {
+				"url": "http://{{host}}/-/item/v1/sitecore/content/home?name=comment1&template={3595418B-6538-40DE-A73A-2FC02467050E}&sc_database=master",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Scitemwebapi-Username",
+						"value": "sitecore\\admin",
+						"description": ""
+					},
+					{
+						"key": "X-Scitemwebapi-Password",
+						"value": "b",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

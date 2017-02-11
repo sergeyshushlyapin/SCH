@@ -1,0 +1,69 @@
+{
+	"variables": [],
+	"info": {
+		"name": "SCH.SSCItemWebAPI",
+		"_postman_id": "5d7006e1-edf4-553f-eb3e-630e5f944772",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"url": "https://{{host}}/sitecore/api/ssc/auth/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"domain\": \"sitecore\",\n  \"username\":\"admin\",\n  \"password\":\"b\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"url": "https://{{host}}/sitecore/api/ssc/auth/logout",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Home page",
+			"request": {
+				"url": "http://{{host}}/sitecore/api/ssc/item?path=/sitecore/content/home",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Home page comments",
+			"request": {
+				"url": "http://{{host}}/sitecore/api/ssc/item?path=/sitecore/content/home/*",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
