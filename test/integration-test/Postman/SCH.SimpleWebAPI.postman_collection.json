@@ -1,0 +1,64 @@
+{
+	"variables": [],
+	"info": {
+		"name": "SCH.SimpleWebAPI",
+		"_postman_id": "fe05df0d-1345-e3e7-c863-e05ea71eaec3",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get pages",
+			"request": {
+				"url": "http://{{host}}/api/pages",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get page by num",
+			"request": {
+				"url": "http://{{host}}/api/pages/1",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get page comments",
+			"request": {
+				"url": "http://{{host}}/api/pages/1/comments",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "New comment",
+			"request": {
+				"url": "http://{{host}}/api/pages/1/comments",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"author\":\"john galt\", \"text\":\"who's john galt\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
