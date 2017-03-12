@@ -22,5 +22,22 @@ namespace Sitecore.Hypermedia.Controllers
 
             return Ok(item);
         }
+
+        [HttpPost]
+        [Route("api/items/{itemId}/workflow/{commandId}")]
+        public IHttpActionResult ExecuteWorkflowCommand(
+            Guid itemId, string commandId)
+        {
+            var existingItem = _service.GetItem(itemId);
+            if (existingItem == null)
+                return NotFound();
+
+            if (!_service.CanExecuteWorkflowCommand(itemId, commandId))
+                return BadRequest($"Invalid workflow command: {commandId}.");
+
+            _service.ExecuteWorkflowCommand(itemId, commandId);
+
+            return Ok();
+        }
     }
 }

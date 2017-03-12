@@ -63,14 +63,59 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             {
                 Id = workflow.WorkflowID,
                 Name = workflow.Appearance.DisplayName,
-                CurrentStateId = workflowState.StateID,
-                CurrentStateName = workflowState.DisplayName,
+                StateId = workflowState.StateID,
+                StateName = workflowState.DisplayName,
                 FinalState = workflowState.FinalState
             };
 
             var actual = sut.GetItem(itemId).Workflow;
 
             Assert.Equal(expected, actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsFalseIfStateIsNotValid(
+           Database database,
+           Guid itemId,
+           string commandId)
+        {
+            var sut = new ItemWorkflowService(database);
+            var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
+            Assert.False(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsFalseIfNoWorkflowFound(
+            Database database,
+            Guid itemId,
+            string commandId,
+            Item item)
+        {
+            database.GetItem(new ID(itemId)).Returns(item);
+            var sut = new ItemWorkflowService(database);
+            var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
+            Assert.False(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsTrueIfStateIsValid(
+            Database database,
+            Guid itemId,
+            Item item,
+            ItemState state,
+            IWorkflow workflow,
+            WorkflowCommand command)
+        {
+            database.GetItem(new ID(itemId)).Returns(item);
+            item.State.Returns(state);
+            state.GetWorkflow().Returns(workflow);
+            workflow.GetCommands(item).Returns(new[] { command });
+            var sut = new ItemWorkflowService(database);
+
+            var actual = sut.CanExecuteWorkflowCommand(
+                itemId, command.CommandID);
+
+            Assert.True(actual);
         }
     }
 }

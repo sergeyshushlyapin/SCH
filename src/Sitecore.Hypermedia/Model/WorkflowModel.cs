@@ -8,9 +8,9 @@ namespace Sitecore.Hypermedia.Model
 
         public string Name { get; set; }
 
-        public string CurrentStateId { get; set; }
+        public string StateId { get; set; }
 
-        public string CurrentStateName { get; set; }
+        public string StateName { get; set; }
 
         public bool FinalState { get; set; }
 
@@ -24,8 +24,8 @@ namespace Sitecore.Hypermedia.Model
 
             return Equals(Id, other.Id)
                    && Equals(Name, other.Name)
-                   && Equals(CurrentStateId, other.CurrentStateId)
-                   && Equals(CurrentStateName, other.CurrentStateName)
+                   && Equals(StateId, other.StateId)
+                   && Equals(StateName, other.StateName)
                    && Equals(FinalState, other.FinalState);
         }
 
@@ -35,11 +35,11 @@ namespace Sitecore.Hypermedia.Model
             if (Name != null)
                 hashCode ^= Name.GetHashCode();
 
-            if (CurrentStateId != null)
-                hashCode ^= CurrentStateId.GetHashCode();
+            if (StateId != null)
+                hashCode ^= StateId.GetHashCode();
 
-            if (CurrentStateName != null)
-                hashCode ^= CurrentStateName.GetHashCode();
+            if (StateName != null)
+                hashCode ^= StateName.GetHashCode();
 
 
             return hashCode;

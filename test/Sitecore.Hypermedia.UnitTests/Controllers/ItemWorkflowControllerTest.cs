@@ -33,5 +33,46 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
             Assert.Same(item,
                 ((OkNegotiatedContentResult<ItemModel>)result).Content);
         }
+
+        [Theory, DefaultAutoData]
+        public void ExecuteWorkflowCommandReturnsNotFoundIfNoItemFound(
+            IItemWorkflowService service,
+            Guid itemId,
+            string commandId)
+        {
+            var sut = new ItemWorkflowController(service);
+            var result = sut.ExecuteWorkflowCommand(itemId, commandId);
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Theory, DefaultAutoData]
+        public void ExecuteWorkflowCommandReturnsBadRequestIfCommandIsInvalid(
+            IItemWorkflowService service,
+            Guid itemId,
+            string commandId,
+            ItemModel item)
+        {
+            service.GetItem(itemId).Returns(item);
+            var sut = new ItemWorkflowController(service);
+            var result = sut.ExecuteWorkflowCommand(itemId, commandId);
+            Assert.IsType<BadRequestErrorMessageResult>(result);
+        }
+
+        [Theory, DefaultAutoData]
+        public void ExecuteWorkflowCommandReturnsOkIfCommandIsExecuted(
+            IItemWorkflowService service,
+            Guid itemId,
+            string commandId,
+            ItemModel item)
+        {
+            service.GetItem(itemId).Returns(item);
+            service.CanExecuteWorkflowCommand(itemId, commandId)
+                .Returns(true);
+            var sut = new ItemWorkflowController(service);
+
+            var result = sut.ExecuteWorkflowCommand(itemId, commandId);
+
+            Assert.IsType<OkResult>(result);
+        }
     }
 }
