@@ -162,6 +162,8 @@
   <ItemGroup>
     <Compile Include="DependencyInjection\CustomServiceConfigurator.cs" />
     <Compile Include="Extensions\ServiceCollectionExtensions.cs" />
+    <Compile Include="Model\ItemModel.cs" />
+    <Compile Include="Model\WorkflowModel.cs" />
     <Compile Include="Services\IItemWorkflowService.cs" />
     <Compile Include="Services\ItemWorkflowService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

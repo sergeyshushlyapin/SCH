@@ -59,6 +59,17 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Get item workflow",
+			"request": {
+				"url": "http://{{host}}/api/wf/items",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }

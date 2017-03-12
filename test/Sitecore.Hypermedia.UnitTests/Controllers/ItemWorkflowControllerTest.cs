@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Web.Http.Results;
 using NSubstitute;
-using Sitecore.Data.Items;
 using Sitecore.Hypermedia.Controllers;
+using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 using Xunit;
 
@@ -21,15 +21,17 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
         }
 
         [Theory, DefaultAutoData]
-        public void GetItemReturnsItemIfFound(
+        public void GetItemReturnsOkResultWithItemIfFound(
             IItemWorkflowService service,
             Guid itemId,
-            Item item)
+            ItemModel item,
+            string itemName)
         {
             service.GetItem(itemId).Returns(item);
             var sut = new ItemWorkflowController(service);
             var result = sut.GetItem(itemId);
-            Assert.IsType<OkResult>(result);
+            Assert.Same(item,
+                ((OkNegotiatedContentResult<ItemModel>)result).Content);
         }
     }
 }

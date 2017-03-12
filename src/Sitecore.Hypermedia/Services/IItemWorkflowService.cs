@@ -1,10 +1,10 @@
 ﻿using System;
-using Sitecore.Data.Items;
+using Sitecore.Hypermedia.Model;
 
 namespace Sitecore.Hypermedia.Services
 {
     public interface IItemWorkflowService
     {
-        Item GetItem(Guid itemId);
+        ItemModel GetItem(Guid itemId);
     }
 }

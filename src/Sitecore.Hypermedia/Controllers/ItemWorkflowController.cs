@@ -20,7 +20,7 @@ namespace Sitecore.Hypermedia.Controllers
             if (item == null)
                 return NotFound();
 
-            return Ok();
+            return Ok(item);
         }
     }
 }

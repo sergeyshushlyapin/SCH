@@ -1,6 +1,6 @@
 ﻿using System;
 using Sitecore.Data;
-using Sitecore.Data.Items;
+using Sitecore.Hypermedia.Model;
 
 namespace Sitecore.Hypermedia.Services
 {
@@ -13,9 +13,34 @@ namespace Sitecore.Hypermedia.Services
             _database = database;
         }
 
-        public Item GetItem(Guid itemId)
+        public ItemModel GetItem(Guid itemId)
         {
-            return _database.GetItem(new ID(itemId));
+            var item = _database.GetItem(new ID(itemId));
+            if (item == null)
+                return null;
+
+            var model = new ItemModel
+            {
+                Id = item.ID.Guid,
+                Name = item.Name,
+                Title = item["Title"]
+            };
+
+            var workflow = item.State?.GetWorkflow();
+            if (workflow != null)
+            {
+                var state = workflow.GetState(item);
+                model.Workflow = new WorkflowModel
+                {
+                    Id = workflow.WorkflowID,
+                    Name = workflow.Appearance.DisplayName,
+                    CurrentStateId = state.StateID,
+                    CurrentStateName = state.DisplayName,
+                    FinalState = state.FinalState
+                };
+            }
+
+            return model;
         }
     }
 }
