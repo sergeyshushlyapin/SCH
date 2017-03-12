@@ -7,6 +7,8 @@ namespace Sitecore.Hypermedia.Services
     {
         ItemModel GetItem(Guid itemId);
 
+        void Update(ItemModel model);
+
         bool CanExecuteWorkflowCommand(Guid itemId, string commandId);
 
         void ExecuteWorkflowCommand(Guid itemId, string commandId);

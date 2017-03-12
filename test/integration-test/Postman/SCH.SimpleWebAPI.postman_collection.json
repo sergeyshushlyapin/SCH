@@ -12,9 +12,9 @@
 			"description": "",
 			"item": [
 				{
-					"name": "Get item workflow",
+					"name": "Get item",
 					"request": {
-						"url": "http://{{host}}/api/wf/items",
+						"url": "http://{{host}}/api/items/{{itemId}}",
 						"method": "GET",
 						"header": [],
 						"body": {},
@@ -23,29 +23,56 @@
 					"response": []
 				},
 				{
-					"name": "Draft: Submit",
+					"name": "Update item title",
 					"request": {
-						"url": "http://{{host}}/api/items/{A8D4DD8E-46FB-4186-BBA4-A2D3A403382D}/workflow/",
-						"method": "PUT",
+						"url": "http://{{host}}/api/items/{{itemId}}",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
 								"value": "application/json",
 								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"commandId\" : \"{CF6A557D-0B86-4432-BF47-302A18238E74}\"\n}"
+							"raw": "{\n  \"Id\": \"{{itemId}}\",\n  \"Title\": \"That's my item updated at {{$timestamp}}.\"\n}"
 						},
 						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "Awaiting Approval: Reject",
+					"name": "Draft: Submit",
 					"request": {
-						"url": "http://{{host}}/api/items/{A8D4DD8E-46FB-4186-BBA4-A2D3A403382D}/workflow/{E44F2D64-1EED-42FF-A7DA-C07B834096AC}",
+						"url": "http://{{host}}/api/items/{{itemId}}/workflow/{CF6A557D-0B86-4432-BF47-302A18238E74}",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Awaiting Approval: Approve",
+					"request": {
+						"url": "http://{{host}}/api/items/{{itemId}}/workflow/{F744CC9C-4BB1-4B38-8D5C-1E9CE7F45D2D}",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Awaiting Approval: Reject copy copy",
+					"request": {
+						"url": "http://{{host}}/api/items/{{itemId}}/workflow/{E44F2D64-1EED-42FF-A7DA-C07B834096AC}",
 						"method": "POST",
 						"header": [],
 						"body": {},

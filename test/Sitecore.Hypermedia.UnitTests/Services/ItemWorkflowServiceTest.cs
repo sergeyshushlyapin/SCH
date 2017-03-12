@@ -86,6 +86,17 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         }
 
         [Theory, DefaultAutoData]
+        public void UpdateThrowsIfNoItemFound(
+            Database database,
+            ItemModel model)
+        {
+            var sut = new ItemWorkflowService(database);
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                sut.Update(model));
+            Assert.Equal($"Item {model.Id} not found.", exception.Message);
+        }
+
+        [Theory, DefaultAutoData]
         public void CanExecuteWorkflowCommandReturnsFalseIfStateIsNotValid(
            Database database,
            Guid itemId,

@@ -24,14 +24,37 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
         public void GetItemReturnsOkResultWithItemIfFound(
             IItemWorkflowService service,
             Guid itemId,
-            ItemModel item,
-            string itemName)
+            ItemModel model,
+            string name)
         {
-            service.GetItem(itemId).Returns(item);
+            service.GetItem(itemId).Returns(model);
             var sut = new ItemWorkflowController(service);
             var result = sut.GetItem(itemId);
-            Assert.Same(item,
+            Assert.Same(model,
                 ((OkNegotiatedContentResult<ItemModel>)result).Content);
+        }
+
+        [Theory, DefaultAutoData]
+        public void UpdateTitleReturnsNotFoundIfNoItemFound(
+            IItemWorkflowService service,
+            ItemModel model)
+        {
+            var sut = new ItemWorkflowController(service);
+            var result = sut.UpdateTitle(model);
+            service.DidNotReceiveWithAnyArgs().Update(model);
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Theory, DefaultAutoData]
+        public void UpdateTitleReturnsOkIfItemFound(
+            IItemWorkflowService service,
+            ItemModel model)
+        {
+            service.GetItem(model.Id).Returns(model);
+            var sut = new ItemWorkflowController(service);
+            var result = sut.UpdateTitle(model);
+            service.Received().Update(model);
+            Assert.IsType<OkResult>(result);
         }
 
         [Theory, DefaultAutoData]
@@ -50,9 +73,9 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
             IItemWorkflowService service,
             Guid itemId,
             string commandId,
-            ItemModel item)
+            ItemModel model)
         {
-            service.GetItem(itemId).Returns(item);
+            service.GetItem(itemId).Returns(model);
             var sut = new ItemWorkflowController(service);
             var result = sut.ExecuteWorkflowCommand(itemId, commandId);
             Assert.IsType<BadRequestErrorMessageResult>(result);
@@ -63,9 +86,9 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
             IItemWorkflowService service,
             Guid itemId,
             string commandId,
-            ItemModel item)
+            ItemModel model)
         {
-            service.GetItem(itemId).Returns(item);
+            service.GetItem(itemId).Returns(model);
             service.CanExecuteWorkflowCommand(itemId, commandId)
                 .Returns(true);
             var sut = new ItemWorkflowController(service);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Http;
+using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 
 namespace Sitecore.Hypermedia.Controllers
@@ -21,6 +22,19 @@ namespace Sitecore.Hypermedia.Controllers
                 return NotFound();
 
             return Ok(item);
+        }
+
+        [HttpPatch]
+        [Route("api/items/{itemId}")]
+        public IHttpActionResult UpdateTitle(ItemModel model)
+        {
+            var item = _service.GetItem(model.Id);
+            if (item == null)
+                return NotFound();
+
+            _service.Update(model);
+
+            return Ok();
         }
 
         [HttpPost]

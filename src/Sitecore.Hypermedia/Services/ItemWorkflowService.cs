@@ -2,6 +2,8 @@
 using System.Linq;
 using Sitecore.Collections;
 using Sitecore.Data;
+using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 using Sitecore.Hypermedia.Model;
 using Sitecore.SecurityModel;
 
@@ -48,9 +50,25 @@ namespace Sitecore.Hypermedia.Services
             return model;
         }
 
+        public void Update(ItemModel model)
+        {
+            // TODO: Remove SecurityDisabler
+            using (new SecurityDisabler())
+            {
+                var item = this._database.GetItem(new ID(model.Id));
+                Assert.IsNotNull(item, $"Item {model.Id} not found.");
+
+                using (new EditContext(item))
+                {
+                    item["Title"] = model.Title;
+                }
+            }
+        }
+
         public bool CanExecuteWorkflowCommand(
             Guid itemId, string commandId)
         {
+            // TODO: Remove SecurityDisabler
             using (new SecurityDisabler())
             {
                 var item = _database.GetItem(new ID(itemId));
