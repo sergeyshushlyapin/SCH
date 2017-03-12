@@ -2,10 +2,12 @@
 using NSubstitute;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 using Xunit;
+using Version = Sitecore.Data.Version;
 
 namespace Sitecore.Hypermedia.UnitTests.Services
 {
@@ -26,9 +28,13 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             Database database,
             Guid itemId,
             Item item,
+            Language language,
+            Version version,
             string name,
             string title)
         {
+            item.Language.Returns(language);
+            item.Version.Returns(version);
             item.Name.Returns(name);
             item["Title"].Returns(title);
             database.GetItem(new ID(itemId)).Returns(item);
@@ -36,6 +42,8 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             var expected = new ItemModel
             {
                 Id = item.ID.Guid,
+                Language = language.Name,
+                Version = version.Number,
                 Name = name,
                 Title = title
             };
@@ -50,10 +58,14 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             Database database,
             Guid itemId,
             Item item,
+            Language language,
+            Version version,
             ItemState state,
             IWorkflow workflow,
             WorkflowState workflowState)
         {
+            item.Language.Returns(language);
+            item.Version.Returns(version);
             database.GetItem(new ID(itemId)).Returns(item);
             item.State.Returns(state);
             state.GetWorkflow().Returns(workflow);

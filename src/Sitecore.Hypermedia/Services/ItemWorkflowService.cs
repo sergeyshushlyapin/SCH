@@ -25,6 +25,8 @@ namespace Sitecore.Hypermedia.Services
             var model = new ItemModel
             {
                 Id = item.ID.Guid,
+                Language = item.Language.Name,
+                Version = item.Version.Number,
                 Name = item.Name,
                 Title = item["Title"]
             };

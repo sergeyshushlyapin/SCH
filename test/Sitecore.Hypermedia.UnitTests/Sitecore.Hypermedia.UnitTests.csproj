@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="DefaultAutoDataAttribute.cs" />
     <Compile Include="Controllers\ItemWorkflowControllerTest.cs" />
+    <Compile Include="EnLanguageCustomization.cs" />
     <Compile Include="Model\WorkflowModelTest.cs" />
     <Compile Include="Model\ItemModelTest.cs" />
     <Compile Include="NSubstituteForTypeCustomization.cs" />

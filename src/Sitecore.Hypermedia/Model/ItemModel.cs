@@ -6,6 +6,10 @@ namespace Sitecore.Hypermedia.Model
     {
         public Guid Id { get; set; }
 
+        public string Language { get; set; }
+
+        public int Version { get; set; }
+
         public string Name { get; set; }
 
         public string Title { get; set; }
@@ -21,6 +25,8 @@ namespace Sitecore.Hypermedia.Model
                 return true;
 
             return Equals(Id, other.Id)
+                   && Equals(Language, other.Language)
+                   && Equals(Version, other.Version)
                    && Equals(Name, other.Name)
                    && Equals(Title, other.Title)
                    && Equals(Workflow, other.Workflow);
@@ -29,6 +35,10 @@ namespace Sitecore.Hypermedia.Model
         public override int GetHashCode()
         {
             var hashCode = Id.GetHashCode() ^ 317;
+            if (Language != null)
+                hashCode ^= Language.GetHashCode();
+            if (Version != null)
+                hashCode ^= Version.GetHashCode();
             if (Name != null)
                 hashCode ^= Name.GetHashCode();
             if (Title != null)
