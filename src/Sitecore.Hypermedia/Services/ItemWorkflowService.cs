@@ -5,6 +5,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Hypermedia.Model;
+using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
 namespace Sitecore.Hypermedia.Services
@@ -52,12 +53,13 @@ namespace Sitecore.Hypermedia.Services
 
         public void Update(ItemModel model)
         {
-            // TODO: Remove SecurityDisabler
-            using (new SecurityDisabler())
-            {
-                var item = this._database.GetItem(new ID(model.Id));
-                Assert.IsNotNull(item, $"Item {model.Id} not found.");
+            var item = this._database.GetItem(new ID(model.Id));
+            Assert.IsNotNull(item, $"Item {model.Id} not found.");
 
+            // TODO: Remove UserSwitcher
+            using (new UserSwitcher(@"sitecore\Author", true))
+            {
+                item.State.GetWorkflow().Start(item);
                 using (new EditContext(item))
                 {
                     item["Title"] = model.Title;

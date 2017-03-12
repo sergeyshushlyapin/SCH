@@ -23,7 +23,7 @@
 					"response": []
 				},
 				{
-					"name": "Update item title",
+					"name": "Update item title & start workflow",
 					"request": {
 						"url": "http://{{host}}/api/items/{{itemId}}",
 						"method": "PATCH",
