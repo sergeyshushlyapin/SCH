@@ -80,9 +80,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataUriCustomization.cs" />
     <Compile Include="DefaultAutoDataAttribute.cs" />
     <Compile Include="Controllers\ItemWorkflowControllerTest.cs" />
     <Compile Include="EnLanguageCustomization.cs" />
+    <Compile Include="Model\ModelFactoryTest.cs" />
     <Compile Include="Model\WorkflowModelTest.cs" />
     <Compile Include="Model\ItemModelTest.cs" />
     <Compile Include="NSubstituteForTypeCustomization.cs" />

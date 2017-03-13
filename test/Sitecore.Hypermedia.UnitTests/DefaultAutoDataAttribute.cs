@@ -14,7 +14,8 @@ namespace Sitecore.Hypermedia.UnitTests
                 .Customize(new NSubstituteForTypeCustomization(typeof(Database)))
                 .Customize(new NSubstituteForTypeCustomization(typeof(Item)))
                 .Customize(new NSubstituteForTypeCustomization(typeof(ItemState)))
-                .Customize(new EnLanguageCustomization());
+                .Customize(new EnLanguageCustomization())
+                .Customize(new DataUriCustomization());
         }
     }
 }

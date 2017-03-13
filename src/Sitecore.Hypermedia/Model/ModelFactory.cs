@@ -21,6 +21,8 @@ namespace Sitecore.Hypermedia.Model
 
         public WorkflowModel Create(IWorkflow workflow)
         {
+            var workflowId = FormatId(workflow.WorkflowID);
+
             return new WorkflowModel
             {
                 Name = workflow.Appearance.DisplayName,
@@ -28,7 +30,7 @@ namespace Sitecore.Hypermedia.Model
                 {
                     CreateLink(
                         _urlHelper.Link(
-                            "Workflow", new {workflowId = workflow.WorkflowID}), "self")
+                            "Workflow", new {workflowId}), "self")
                 },
                 States = new List<WorkflowStateModel>(
                     workflow.GetStates().Select(x => Create(workflow.WorkflowID, x)))
@@ -37,6 +39,9 @@ namespace Sitecore.Hypermedia.Model
 
         public WorkflowStateModel Create(string workflowId, WorkflowState workflowState)
         {
+            workflowId = FormatId(workflowId);
+            var workflowStateId = FormatId(workflowState.StateID);
+
             return new WorkflowStateModel
             {
                 Name = workflowState.DisplayName,
@@ -49,7 +54,7 @@ namespace Sitecore.Hypermedia.Model
                     CreateLink(
                         _urlHelper.Link(
                             "WorkflowState",
-                            new {workflowId, workflowStateId = workflowState.StateID}),
+                            new {workflowId, workflowStateId }),
                         "self")
                 }
             };
@@ -64,7 +69,7 @@ namespace Sitecore.Hypermedia.Model
                 Version = uri.Version.Number,
                 Links = new List<LinkModel>
                 {
-                    CreateLink(_urlHelper.Link("Item", new {itemId = uri.ItemID}), "self")
+                    CreateLink(_urlHelper.Link("Item", new {itemId = uri.ItemID.Guid}), "self")
                 }
             };
         }
@@ -72,6 +77,15 @@ namespace Sitecore.Hypermedia.Model
         public LinkModel CreateLink(string url, string rel, string method = "GET")
         {
             return new LinkModel { Href = url, Rel = rel, Method = method };
+        }
+
+        private static string FormatId(string workflowId)
+        {
+            if (ID.IsID(workflowId))
+            {
+                workflowId = ID.Parse(workflowId).Guid.ToString();
+            }
+            return workflowId;
         }
     }
 }
