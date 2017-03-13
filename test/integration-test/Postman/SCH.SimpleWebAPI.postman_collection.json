@@ -8,9 +8,20 @@
 	},
 	"item": [
 		{
-			"name": "Execute Workflow Command",
+			"name": "Item Workflow",
 			"description": "",
 			"item": [
+				{
+					"name": "Get all items",
+					"request": {
+						"url": "http://{{host}}/api/items",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
 				{
 					"name": "Get item",
 					"request": {
@@ -74,6 +85,23 @@
 					"request": {
 						"url": "http://{{host}}/api/items/{{itemId}}/workflow/{E44F2D64-1EED-42FF-A7DA-C07B834096AC}",
 						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workbox",
+			"description": "",
+			"item": [
+				{
+					"name": "Get workflows",
+					"request": {
+						"url": "http://{{host}}/api/wb",
+						"method": "GET",
 						"header": [],
 						"body": {},
 						"description": ""

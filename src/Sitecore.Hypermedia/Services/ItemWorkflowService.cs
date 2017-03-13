@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Sitecore.Collections;
 using Sitecore.Data;
@@ -19,34 +20,22 @@ namespace Sitecore.Hypermedia.Services
             _database = database;
         }
 
+        public IEnumerable<ItemModel> GetContentItems()
+        {
+            return _database
+                .GetItem(ItemIDs.ContentRoot)
+                .Axes
+                .GetDescendants()
+                .Select(ToItemModel);
+        }
+
         public ItemModel GetItem(Guid itemId)
         {
             var item = _database.GetItem(new ID(itemId));
             if (item == null)
                 return null;
 
-            var model = new ItemModel
-            {
-                Id = item.ID.Guid,
-                Language = item.Language.Name,
-                Version = item.Version.Number,
-                Name = item.Name,
-                Title = item["Title"]
-            };
-
-            var workflow = item.State?.GetWorkflow();
-            if (workflow != null)
-            {
-                var state = workflow.GetState(item);
-                model.Workflow = new WorkflowModel
-                {
-                    Id = workflow.WorkflowID,
-                    Name = workflow.Appearance.DisplayName,
-                    StateId = state.StateID,
-                    StateName = state.DisplayName,
-                    FinalState = state.FinalState
-                };
-            }
+            var model = ToItemModel(item);
 
             return model;
         }
@@ -90,6 +79,33 @@ namespace Sitecore.Hypermedia.Services
             var workflow = item.State.GetWorkflow();
             workflow.Execute(
                 commandId, item, new StringDictionary(), false);
+        }
+
+        private static ItemModel ToItemModel(Item item)
+        {
+            var model = new ItemModel
+            {
+                Id = item.ID.Guid,
+                Language = item.Language.Name,
+                Version = item.Version.Number,
+                Name = item.Name,
+                Title = item["Title"]
+            };
+
+            var workflow = item.State?.GetWorkflow();
+            if (workflow != null)
+            {
+                var state = workflow.GetState(item);
+                model.ItemWorkflow = new ItemWorkflowModel
+                {
+                    Id = workflow.WorkflowID,
+                    Name = workflow.Appearance.DisplayName,
+                    StateId = state.StateID,
+                    StateName = state.DisplayName,
+                    FinalState = state.FinalState
+                };
+            }
+            return model;
         }
     }
 }

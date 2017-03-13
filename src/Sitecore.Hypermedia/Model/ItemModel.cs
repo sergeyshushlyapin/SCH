@@ -14,7 +14,7 @@ namespace Sitecore.Hypermedia.Model
 
         public string Title { get; set; }
 
-        public WorkflowModel Workflow { get; set; }
+        public ItemWorkflowModel ItemWorkflow { get; set; }
 
         public bool Equals(ItemModel other)
         {
@@ -29,7 +29,7 @@ namespace Sitecore.Hypermedia.Model
                    && Equals(Version, other.Version)
                    && Equals(Name, other.Name)
                    && Equals(Title, other.Title)
-                   && Equals(Workflow, other.Workflow);
+                   && Equals(ItemWorkflow, other.ItemWorkflow);
         }
 
         public override int GetHashCode()
@@ -37,14 +37,13 @@ namespace Sitecore.Hypermedia.Model
             var hashCode = Id.GetHashCode() ^ 317;
             if (Language != null)
                 hashCode ^= Language.GetHashCode();
-            if (Version != null)
-                hashCode ^= Version.GetHashCode();
+            hashCode ^= Version.GetHashCode();
             if (Name != null)
                 hashCode ^= Name.GetHashCode();
             if (Title != null)
                 hashCode ^= Title.GetHashCode();
-            if (Workflow != null)
-                hashCode ^= Workflow.GetHashCode();
+            if (ItemWorkflow != null)
+                hashCode ^= ItemWorkflow.GetHashCode();
 
             return hashCode;
         }

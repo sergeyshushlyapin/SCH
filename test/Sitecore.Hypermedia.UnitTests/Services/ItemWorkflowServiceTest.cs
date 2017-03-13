@@ -71,7 +71,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             state.GetWorkflow().Returns(workflow);
             workflow.GetState(item).Returns(workflowState);
             var sut = new ItemWorkflowService(database);
-            var expected = new WorkflowModel
+            var expected = new ItemWorkflowModel
             {
                 Id = workflow.WorkflowID,
                 Name = workflow.Appearance.DisplayName,
@@ -80,7 +80,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
                 FinalState = workflowState.FinalState
             };
 
-            var actual = sut.GetItem(itemId).Workflow;
+            var actual = sut.GetItem(itemId).ItemWorkflow;
 
             Assert.Equal(expected, actual);
         }
