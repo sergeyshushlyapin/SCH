@@ -24,7 +24,7 @@ namespace Sitecore.Hypermedia.Controllers
             return Ok(item);
         }
 
-        [Route("api/items/{itemId}")]
+        [Route("api/items/{itemId}", Name = "Item")]
         public IHttpActionResult GetItem(Guid itemId)
         {
             var item = _service.GetItem(itemId);

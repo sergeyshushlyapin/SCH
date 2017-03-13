@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Sitecore.Data;
 using Sitecore.Workflows;
 
 namespace Sitecore.Hypermedia.Services
@@ -12,5 +13,7 @@ namespace Sitecore.Hypermedia.Services
         IEnumerable<WorkflowState> GetWorkflowStates(string workflowId);
 
         WorkflowState GetWorkflowState(string workflowId, string workflowStateId);
+
+        IEnumerable<DataUri> GetItemsInState(string workflowId, string workflowStateId);
     }
 }

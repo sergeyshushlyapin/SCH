@@ -2,16 +2,20 @@
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Routing;
+using Sitecore.Data;
+using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 
 namespace Sitecore.Hypermedia.Model
 {
     public class ModelFactory
     {
+        private readonly IWorkboxService _service;
         private readonly UrlHelper _urlHelper;
 
-        public ModelFactory(HttpRequestMessage request)
+        public ModelFactory(HttpRequestMessage request, IWorkboxService service)
         {
+            _service = service;
             _urlHelper = new UrlHelper(request);
         }
 
@@ -37,6 +41,9 @@ namespace Sitecore.Hypermedia.Model
             {
                 Name = workflowState.DisplayName,
                 FinalState = workflowState.FinalState,
+                Items = new List<WorkflowItemModel>(
+                    _service.GetItemsInState(workflowId, workflowState.StateID)
+                    .Select(Create)),
                 Links = new List<LinkModel>
                 {
                     CreateLink(
@@ -44,6 +51,20 @@ namespace Sitecore.Hypermedia.Model
                             "WorkflowState",
                             new {workflowId, workflowStateId = workflowState.StateID}),
                         "self")
+                }
+            };
+        }
+
+        public WorkflowItemModel Create(DataUri uri)
+        {
+            return new WorkflowItemModel
+            {
+                Name = uri.Path,
+                Language = uri.Language.Name,
+                Version = uri.Version.Number,
+                Links = new List<LinkModel>
+                {
+                    CreateLink(_urlHelper.Link("Item", new {itemId = uri.ItemID}), "self")
                 }
             };
         }

@@ -167,6 +167,7 @@
     <Compile Include="Model\LinkModel.cs" />
     <Compile Include="Model\ItemWorkflowModel.cs" />
     <Compile Include="Model\ModelFactory.cs" />
+    <Compile Include="Model\WorkflowItemModel.cs" />
     <Compile Include="Model\WorkflowStateModel.cs" />
     <Compile Include="Model\WorkflowModel.cs" />
     <Compile Include="Services\IItemWorkflowService.cs" />

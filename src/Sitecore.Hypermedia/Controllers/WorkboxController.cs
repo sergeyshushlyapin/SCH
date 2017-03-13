@@ -16,7 +16,7 @@ namespace Sitecore.Hypermedia.Controllers
             _service = service;
         }
 
-        protected ModelFactory ModelFactory => _modelFactory ?? (_modelFactory = new ModelFactory(Request));
+        protected ModelFactory ModelFactory => _modelFactory ?? (_modelFactory = new ModelFactory(Request, _service));
 
         [Route("api/wb")]
         public IEnumerable<WorkflowModel> Get()
