@@ -2,6 +2,7 @@
 using NSubstitute;
 using Ploeh.AutoFixture.Xunit2;
 using Sitecore.Data;
+using Sitecore.Data.Items;
 using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 using Xunit;
@@ -143,6 +144,27 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             workflow.GetItems(workflowStateId).Returns(expected);
             var actual = sut.GetItemsInState(workflowId, workflowStateId);
             Assert.True(expected.SequenceEqual(actual));
+        }
+
+        [Theory, DefaultAutoData]
+        public void GetItemNameReturnsNullIfNoItemFound(WorkboxService sut, ID id)
+        {
+            var actual = sut.GetItemName(id);
+            Assert.Null(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void GetItemNameReturnsItemNameIfExists(
+            [Frozen] Database database,
+            WorkboxService sut,
+            ID id,
+            Item item,
+            string expected)
+        {
+            database.GetItem(id).Returns(item);
+            item.Name.Returns(expected);
+            var actual = sut.GetItemName(id);
+            Assert.Equal(expected, actual);
         }
     }
 }

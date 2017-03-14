@@ -64,7 +64,7 @@ namespace Sitecore.Hypermedia.Model
         {
             return new WorkflowItemModel
             {
-                Name = uri.Path,
+                Name = _service.GetItemName(uri.ItemID),
                 Language = uri.Language.Name,
                 Version = uri.Version.Number,
                 Links = new List<LinkModel>

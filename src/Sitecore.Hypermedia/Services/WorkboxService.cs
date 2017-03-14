@@ -44,5 +44,10 @@ namespace Sitecore.Hypermedia.Services
             return GetWorkflow(workflowId)?.GetItems(workflowStateId)
                 ?? Enumerable.Empty<DataUri>();
         }
+
+        public string GetItemName(ID id)
+        {
+            return this._database.GetItem(id)?.Name;
+        }
     }
 }

@@ -15,5 +15,7 @@ namespace Sitecore.Hypermedia.Services
         WorkflowState GetWorkflowState(string workflowId, string workflowStateId);
 
         IEnumerable<DataUri> GetItemsInState(string workflowId, string workflowStateId);
+
+        string GetItemName(ID id);
     }
 }

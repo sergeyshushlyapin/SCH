@@ -6,6 +6,7 @@ using NSubstitute;
 using Ploeh.AutoFixture.Xunit2;
 using Sitecore.Data;
 using Sitecore.Hypermedia.Model;
+using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 using Xunit;
 
@@ -43,6 +44,21 @@ namespace Sitecore.Hypermedia.UnitTests.Model
             var state = new WorkflowState(notFormattedStateId.ToString(), displayName, icon, finalState);
             var expected = $"{request.RequestUri}api/wb/{notFormattedWorkflowId.Guid}/states/{notFormattedStateId.Guid}";
             var actual = sut.Create(notFormattedWorkflowId.ToString(), state).Links.Single().Href;
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CreateWorkflowItemModelReturnsItemName(
+            [Frozen] HttpRequestMessage request,
+            [Frozen] IWorkboxService service,
+            ModelFactory sut,
+            DataUri dataUri,
+            string rel,
+            string expected)
+        {
+            request.SetConfiguration(DefaultHttpConfiguration);
+            service.GetItemName(dataUri.ItemID).Returns(expected);
+            var actual = sut.Create(dataUri).Name;
             Assert.Equal(expected, actual);
         }
 
