@@ -33,7 +33,7 @@ namespace Sitecore.Hypermedia.Model
                             "Workflow", new {workflowId}), "self")
                 },
                 States = new List<WorkflowStateModel>(
-                    workflow.GetStates().Select(x => Create(workflow.WorkflowID, x)))
+                    _service.GetWorkflowStates(workflowId).Select(x => Create(workflow.WorkflowID, x)))
             };
         }
 

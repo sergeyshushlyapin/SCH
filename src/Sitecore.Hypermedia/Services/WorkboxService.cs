@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Sitecore.Data;
 using Sitecore.Workflows;
 
@@ -15,7 +16,8 @@ namespace Sitecore.Hypermedia.Services
 
         public IEnumerable<IWorkflow> GetWorkflows()
         {
-            return _database.WorkflowProvider.GetWorkflows();
+            return _database.WorkflowProvider.GetWorkflows()
+                ?? Enumerable.Empty<IWorkflow>();
         }
 
         public IWorkflow GetWorkflow(string workflowId)
@@ -25,7 +27,8 @@ namespace Sitecore.Hypermedia.Services
 
         public IEnumerable<WorkflowState> GetWorkflowStates(string workflowId)
         {
-            return GetWorkflow(workflowId)?.GetStates();
+            return GetWorkflow(workflowId)?.GetStates().Where(x => !x.FinalState)
+                ?? Enumerable.Empty<WorkflowState>();
         }
 
         public WorkflowState GetWorkflowState(string workflowId, string workflowStateId)
@@ -35,7 +38,8 @@ namespace Sitecore.Hypermedia.Services
 
         public IEnumerable<DataUri> GetItemsInState(string workflowId, string workflowStateId)
         {
-            return GetWorkflow(workflowId)?.GetItems(workflowStateId);
+            return GetWorkflow(workflowId)?.GetItems(workflowStateId)
+                ?? Enumerable.Empty<DataUri>();
         }
     }
 }
