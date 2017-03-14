@@ -27,7 +27,10 @@ namespace Sitecore.Hypermedia.Services
 
         public IEnumerable<WorkflowState> GetWorkflowStates(string workflowId)
         {
-            return GetWorkflow(workflowId)?.GetStates().Where(x => !x.FinalState)
+            var workflow = GetWorkflow(workflowId);
+            return workflow?.GetStates()
+                .Where(x => !x.FinalState)
+                .Where(x => workflow.GetItems(x.StateID).Any())
                 ?? Enumerable.Empty<WorkflowState>();
         }
 

@@ -61,26 +61,30 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         }
 
         [Theory, DefaultAutoData]
-        public void GetWorkflowStatesReturnsNonFinalStates(
+        public void GetWorkflowStatesReturnsNonFinalStatesWithItemsOnly(
             [Frozen] Database database,
             WorkboxService sut,
             string workflowId,
             IWorkflow workflow,
             string stateId1,
             string stateId2,
+            string stateId3,
             string displayName,
-            string icon)
+            string icon,
+            DataUri[] itemsInState)
         {
             database.WorkflowProvider.GetWorkflow(workflowId)
                 .Returns(workflow);
             var finalState = new WorkflowState(stateId1, displayName, icon, true);
-            var notFinalState = new WorkflowState(stateId2, displayName, icon, false);
+            var nonFinalStateWithItems = new WorkflowState(stateId2, displayName, icon, false);
+            var nonFinalStateWithoutItems = new WorkflowState(stateId3, displayName, icon, false);
             workflow.GetStates()
-                .Returns(new[] { finalState, notFinalState });
+                .Returns(new[] { finalState, nonFinalStateWithItems, nonFinalStateWithoutItems });
+            workflow.GetItems(nonFinalStateWithItems.StateID).Returns(itemsInState);
 
             var actual = sut.GetWorkflowStates(workflowId);
 
-            Assert.Equal(notFinalState, actual.Single());
+            Assert.True(new[] { nonFinalStateWithItems }.SequenceEqual(actual));
         }
 
         [Theory, DefaultAutoData]
