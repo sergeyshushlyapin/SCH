@@ -9,6 +9,7 @@ using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 using Xunit;
+using static Sitecore.Hypermedia.Model.ModelFactory;
 
 namespace Sitecore.Hypermedia.UnitTests.Model
 {
@@ -53,12 +54,14 @@ namespace Sitecore.Hypermedia.UnitTests.Model
             [Frozen] IWorkboxService service,
             ModelFactory sut,
             DataUri dataUri,
+            string workflowId,
+            string stateId,
             string rel,
             string expected)
         {
             request.SetConfiguration(DefaultHttpConfiguration);
             service.GetItemName(dataUri.ItemID).Returns(expected);
-            var actual = sut.Create(dataUri).Name;
+            var actual = sut.Create(dataUri, workflowId, stateId).Name;
             Assert.Equal(expected, actual);
         }
 
@@ -67,12 +70,40 @@ namespace Sitecore.Hypermedia.UnitTests.Model
             [Frozen] HttpRequestMessage request,
             ModelFactory sut,
             DataUri dataUri,
+            string workflowId,
+            string stateId,
             string rel)
         {
             request.SetConfiguration(DefaultHttpConfiguration);
             var expected = $"{request.RequestUri}api/items/{dataUri.ItemID.Guid}";
-            var actual = sut.Create(dataUri).Links.Single().Href;
+            var actual = sut.Create(dataUri, workflowId, stateId).Links.Single().Href;
             Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineDefaultAutoData(SampleWorkflow.DraftStateId)]
+        //[InlineDefaultAutoData(SampleWorkflow.AwaitingApprovalStateId)]
+        public void CreateWorkflowItemModelReturnsSubmitItemLink(
+            string stateId,
+            string workflowId,
+            [Frozen] HttpRequestMessage request,
+            [Frozen(Matching.ImplementedInterfaces)] WorkboxService service,
+            ModelFactory sut,
+            DataUri dataUri,
+            string rel)
+        {
+            request.SetConfiguration(DefaultHttpConfiguration);
+            var commandId = service.GetAllowedCommands(stateId).First();
+            var expected = new LinkModel
+            {
+                Href = $"{request.RequestUri}api/wb/{FormatId(workflowId)}/states/{FormatId(stateId)}/commands/{commandId}",
+                Rel = "execute",
+                Method = "POST"
+            };
+
+            var actual = sut.Create(dataUri, workflowId, stateId);
+
+            Assert.Contains(expected, actual.Links, new LinkModelEqualityComparer());
         }
 
         private static HttpConfiguration DefaultHttpConfiguration =>
@@ -81,7 +112,8 @@ namespace Sitecore.Hypermedia.UnitTests.Model
                 {
                     {"Item", new HttpRoute("api/items/{itemId}")},
                     {"Workflow", new HttpRoute("api/wb/{workflowId}")},
-                    {"WorkflowState", new HttpRoute("api/wb/{workflowId}/states/{workflowStateId}")}
+                    {"WorkflowState", new HttpRoute("api/wb/{workflowId}/states/{stateId}")},
+                    { "WorkflowCommand",new HttpRoute("api/wb/{workflowId}/states/{stateId}/commands/{commandId}")}
                 });
     }
 }

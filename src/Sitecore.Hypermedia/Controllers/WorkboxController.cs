@@ -45,10 +45,21 @@ namespace Sitecore.Hypermedia.Controllers
             return Ok(workflowStates.Select(x => ModelFactory.Create(workflowId, x)));
         }
 
-        [Route("api/wb/{workflowId}/states/{workflowStateId}", Name = "WorkflowState")]
-        public IHttpActionResult GetStates(string workflowId, string workflowStateId)
+        [Route("api/wb/{workflowId}/states/{stateId}", Name = "WorkflowState")]
+        public IHttpActionResult GetStates(string workflowId, string stateId)
         {
-            var workflowState = _service.GetWorkflowState(workflowId, workflowStateId);
+            var workflowState = _service.GetWorkflowState(workflowId, stateId);
+            if (workflowState == null)
+                return NotFound();
+
+            return Ok(ModelFactory.Create(workflowId, workflowState));
+        }
+
+        [HttpPost]
+        [Route("api/wb/{workflowId}/states/{stateId}/commands/{commandId}", Name = "WorkflowCommand")]
+        public IHttpActionResult GetStates(string workflowId, string stateId, string commandId)
+        {
+            var workflowState = _service.GetWorkflowState(workflowId, stateId);
             if (workflowState == null)
                 return NotFound();
 

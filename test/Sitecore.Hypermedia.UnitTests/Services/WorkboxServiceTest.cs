@@ -166,5 +166,29 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             var actual = sut.GetItemName(id);
             Assert.Equal(expected, actual);
         }
+
+        [Theory, DefaultAutoData]
+        public void GetAllowedCommandsReturnsEmptyListIfStateIsNotGuid(
+            WorkboxService sut,
+            string workflowId,
+            string workflowStateId)
+        {
+            var actual = sut.GetAllowedCommands(workflowStateId);
+            Assert.Empty(actual);
+        }
+
+        [Theory]
+        [InlineDefaultAutoData(SampleWorkflow.DraftStateId, "cf6a557d-0b86-4432-bf47-302a18238e74")]
+        [InlineDefaultAutoData(SampleWorkflow.AwaitingApprovalStateId, "f744cc9c-4bb1-4b38-8d5c-1e9ce7f45d2d|e44f2d64-1eed-42ff-a7da-c07b834096ac")]
+        [InlineDefaultAutoData("{11111111-1111-1111-1111-111111111111}", "")]
+        public void GetAllowedCommandsReturnsCommandIds(
+            string workflowStateId,
+            string expected,
+            WorkboxService sut,
+            string workflowId)
+        {
+            var actual = sut.GetAllowedCommands(workflowStateId);
+            Assert.Equal(expected, string.Join("|", actual));
+        }
     }
 }

@@ -10,6 +10,6 @@ namespace Sitecore.Hypermedia.Model
 
         public int Version { get; set; }
 
-        public IEnumerable<LinkModel> Links { get; set; }
+        public ICollection<LinkModel> Links { get; set; }
     }
 }

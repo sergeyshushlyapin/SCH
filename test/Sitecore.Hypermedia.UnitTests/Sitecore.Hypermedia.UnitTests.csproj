@@ -84,11 +84,14 @@
     <Compile Include="DefaultAutoDataAttribute.cs" />
     <Compile Include="Controllers\ItemWorkflowControllerTest.cs" />
     <Compile Include="EnLanguageCustomization.cs" />
+    <Compile Include="InlineDefaultAutoDataAttribute.cs" />
+    <Compile Include="LinkModelEqualityComparer.cs" />
     <Compile Include="Model\ModelFactoryTest.cs" />
     <Compile Include="Model\WorkflowModelTest.cs" />
     <Compile Include="Model\ItemModelTest.cs" />
     <Compile Include="NSubstituteForTypeCustomization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleWorkflow.cs" />
     <Compile Include="Services\ItemWorkflowServiceTest.cs" />
     <Compile Include="Services\WorkboxServiceTest.cs" />
   </ItemGroup>

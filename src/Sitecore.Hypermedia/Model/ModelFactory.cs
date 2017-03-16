@@ -40,29 +40,31 @@ namespace Sitecore.Hypermedia.Model
         public WorkflowStateModel Create(string workflowId, WorkflowState workflowState)
         {
             workflowId = FormatId(workflowId);
-            var workflowStateId = FormatId(workflowState.StateID);
+            var stateId = FormatId(workflowState.StateID);
+            var stateLink = _urlHelper.Link("WorkflowState", new { workflowId, stateId });
 
-            return new WorkflowStateModel
+            var model = new WorkflowStateModel
             {
                 Name = workflowState.DisplayName,
                 FinalState = workflowState.FinalState,
                 Items = new List<WorkflowItemModel>(
                     _service.GetItemsInState(workflowId, workflowState.StateID)
-                    .Select(Create)),
+                        .Select(x => Create(x, workflowId, stateId))),
                 Links = new List<LinkModel>
                 {
-                    CreateLink(
-                        _urlHelper.Link(
-                            "WorkflowState",
-                            new {workflowId, workflowStateId }),
-                        "self")
+                    CreateLink(stateLink, "self")
                 }
             };
+
+            return model;
         }
 
-        public WorkflowItemModel Create(DataUri uri)
+        public WorkflowItemModel Create(DataUri uri, string workflowId, string stateId)
         {
-            return new WorkflowItemModel
+            workflowId = FormatId(workflowId);
+            stateId = FormatId(stateId);
+
+            var model = new WorkflowItemModel
             {
                 Name = _service.GetItemName(uri.ItemID),
                 Language = uri.Language.Name,
@@ -72,6 +74,21 @@ namespace Sitecore.Hypermedia.Model
                     CreateLink(_urlHelper.Link("Item", new {itemId = uri.ItemID.Guid}), "self")
                 }
             };
+
+            var commands = _service.GetAllowedCommands(stateId);
+            foreach (var commandId in commands)
+            {
+                model.Links.Add(
+                    CreateLink(
+                        _urlHelper.Link(
+                            "WorkflowCommand",
+                            new { workflowId, stateId, commandId }),
+                        // TODO: Add command name
+                        "execute",
+                        "POST"));
+            }
+
+            return model;
         }
 
         public LinkModel CreateLink(string url, string rel, string method = "GET")
@@ -79,7 +96,7 @@ namespace Sitecore.Hypermedia.Model
             return new LinkModel { Href = url, Rel = rel, Method = method };
         }
 
-        private static string FormatId(string workflowId)
+        public static string FormatId(string workflowId)
         {
             if (ID.IsID(workflowId))
             {
