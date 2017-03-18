@@ -12,8 +12,9 @@ namespace Sitecore.Hypermedia.Controllers
             var linkHelper = new UrlHelper(Request);
             var model = new DefaultUrls()
             {
-                ItemsUrl = linkHelper.Link("SchItems", new { }),
-                WorkboxUrl = linkHelper.Link("SchWorkbox", new { }),
+                Items_Url = linkHelper.Link("SchItems", new { }),
+                Workbox_Url = linkHelper.Link("SchWorkbox", new { }),
+                Workflows_Url = linkHelper.Link("SchWorkflows", new { })
             };
 
             return model;

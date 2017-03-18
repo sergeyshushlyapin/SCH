@@ -13,7 +13,7 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
     {
         [Theory, DefaultAutoData]
         public void GetReturnsEmptyListIfNothingFound(
-           IWorkboxService service,
+           IWorkflowService service,
            HttpRequestMessage request)
         {
             var sut = new WorkboxController(service) { Request = request };
@@ -23,7 +23,7 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
 
         [Theory, DefaultAutoData]
         public void GetReturnsWorkflowListIfFound(
-          IWorkboxService service,
+          IWorkflowService service,
           HttpRequestMessage request,
           IEnumerable<IWorkflow> workflows)
         {

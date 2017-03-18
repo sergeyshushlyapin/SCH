@@ -2,7 +2,8 @@
 {
     public class DefaultUrls
     {
-        public string ItemsUrl { get; set; }
-        public string WorkboxUrl { get; set; }
+        public string Items_Url { get; set; }
+        public string Workbox_Url { get; set; }
+        public string Workflows_Url { get; set; }
     }
 }

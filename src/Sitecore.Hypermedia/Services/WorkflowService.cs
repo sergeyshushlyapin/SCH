@@ -7,11 +7,11 @@ using Sitecore.Workflows;
 
 namespace Sitecore.Hypermedia.Services
 {
-    public class WorkboxService : IWorkboxService
+    public class WorkflowService : IWorkflowService
     {
         private readonly Database _database;
 
-        public WorkboxService(Database database)
+        public WorkflowService(Database database)
         {
             _database = database;
         }
@@ -28,6 +28,13 @@ namespace Sitecore.Hypermedia.Services
         }
 
         public IEnumerable<WorkflowState> GetWorkflowStates(string workflowId)
+        {
+            var workflow = GetWorkflow(workflowId);
+            return workflow?.GetStates()
+                ?? Enumerable.Empty<WorkflowState>();
+        }
+
+        public IEnumerable<WorkflowState> GetWorkflowStatesWithItems(string workflowId)
         {
             var workflow = GetWorkflow(workflowId);
             return workflow?.GetStates()

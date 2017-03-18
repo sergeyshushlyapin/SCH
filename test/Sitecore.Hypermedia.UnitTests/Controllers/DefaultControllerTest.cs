@@ -13,10 +13,10 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
         {
             var expected = new DefaultUrls
             {
-                ItemsUrl = request.RequestUri + "api/sch/items",
-                WorkboxUrl = request.RequestUri + "api/sch/workbox"
+                Items_Url = request.RequestUri + "api/sch/items",
+                Workbox_Url = request.RequestUri + "api/sch/workbox",
+                Workflows_Url = request.RequestUri + "api/sch/workflows"
             };
-            request.SetConfiguration(new DefaultHttpConfiguration());
             var sut = new DefaultController { Request = request };
 
             var actual = sut.Get();

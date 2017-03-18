@@ -12,8 +12,8 @@ namespace Sitecore.Hypermedia.Extensions
             serviceCollection.AddTransient<IItemWorkflowService>(x =>
                 new ItemWorkflowService(Factory.GetDatabase("master")));
 
-            serviceCollection.AddTransient<IWorkboxService>(x =>
-                new WorkboxService(Factory.GetDatabase("master")));
+            serviceCollection.AddTransient<IWorkflowService>(x =>
+                new WorkflowService(Factory.GetDatabase("master")));
 
             return serviceCollection;
         }

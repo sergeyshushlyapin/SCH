@@ -9,12 +9,12 @@ using Xunit;
 
 namespace Sitecore.Hypermedia.UnitTests.Services
 {
-    public class WorkboxServiceTest
+    public class WorkflowServiceTest
     {
         [Theory, DefaultAutoData]
         public void GetWorkflowsReturnsEmplyListIfNoWorkflowsFound(
             [Frozen] Database database,
-            WorkboxService sut)
+            WorkflowService sut)
         {
             database.WorkflowProvider.GetWorkflows()
                 .Returns(Arg.Any<IWorkflow[]>());
@@ -25,7 +25,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetWorkflowsReturnsWorkflows(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             IWorkflow[] expected)
         {
             database.WorkflowProvider.GetWorkflows()
@@ -38,7 +38,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetWorkflowReturnsWorkflow(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId,
             IWorkflow expected)
         {
@@ -52,7 +52,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetWorkflowStatesReturnsEmplyListIfNoWorkflowFound(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId)
         {
             database.WorkflowProvider.GetWorkflow(workflowId)
@@ -62,9 +62,38 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         }
 
         [Theory, DefaultAutoData]
-        public void GetWorkflowStatesReturnsNonFinalStatesWithItemsOnly(
+        public void GetWorkflowStatesReturnsAllStates(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
+            string workflowId,
+            IWorkflow workflow,
+            WorkflowState[] expected)
+        {
+            database.WorkflowProvider.GetWorkflow(workflowId)
+                .Returns(workflow);
+            workflow.GetStates().Returns(expected);
+
+            var actual = sut.GetWorkflowStates(workflowId);
+
+            Assert.Same(expected, actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void GetWorkflowStatesWithItemsReturnsEmplyListIfNoWorkflowFound(
+            [Frozen] Database database,
+            WorkflowService sut,
+            string workflowId)
+        {
+            database.WorkflowProvider.GetWorkflow(workflowId)
+                .ReturnsForAnyArgs(Arg.Any<IWorkflow>());
+            var actual = sut.GetWorkflowStatesWithItems(workflowId);
+            Assert.Empty(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void GetWorkflowStatesWithItemsReturnsNonFinalStatesWithItemsOnly(
+            [Frozen] Database database,
+            WorkflowService sut,
             string workflowId,
             IWorkflow workflow,
             string stateId1,
@@ -83,7 +112,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
                 .Returns(new[] { finalState, nonFinalStateWithItems, nonFinalStateWithoutItems });
             workflow.GetItems(nonFinalStateWithItems.StateID).Returns(itemsInState);
 
-            var actual = sut.GetWorkflowStates(workflowId);
+            var actual = sut.GetWorkflowStatesWithItems(workflowId);
 
             Assert.True(new[] { nonFinalStateWithItems }.SequenceEqual(actual));
         }
@@ -91,7 +120,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetWorkflowStateReturnsNullIfNoWorkflowFound(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId,
             string workflowStateId)
         {
@@ -104,7 +133,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetWorkflowStateReturnsWorkflow(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId,
             string workflowStateId,
             IWorkflow workflow,
@@ -120,7 +149,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetItemsInStateReturnsEmplyListIfNoWorkflowFound(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId,
             string workflowStateId)
         {
@@ -133,7 +162,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetItemsInStateReturnsDataUris(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId,
             string workflowStateId,
             IWorkflow workflow,
@@ -147,7 +176,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         }
 
         [Theory, DefaultAutoData]
-        public void GetItemNameReturnsNullIfNoItemFound(WorkboxService sut, ID id)
+        public void GetItemNameReturnsNullIfNoItemFound(WorkflowService sut, ID id)
         {
             var actual = sut.GetItemName(id);
             Assert.Null(actual);
@@ -156,7 +185,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         [Theory, DefaultAutoData]
         public void GetItemNameReturnsItemNameIfExists(
             [Frozen] Database database,
-            WorkboxService sut,
+            WorkflowService sut,
             ID id,
             Item item,
             string expected)
@@ -169,7 +198,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
 
         [Theory, DefaultAutoData]
         public void GetAllowedCommandsReturnsEmptyListIfStateIsNotGuid(
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId,
             string workflowStateId)
         {
@@ -184,7 +213,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         public void GetAllowedCommandsReturnsCommandIds(
             string workflowStateId,
             string expected,
-            WorkboxService sut,
+            WorkflowService sut,
             string workflowId)
         {
             var actual = sut.GetAllowedCommands(workflowStateId);

@@ -10,13 +10,27 @@ namespace Sitecore.Hypermedia.Model
 {
     public class ModelFactory
     {
-        private readonly IWorkboxService _service;
+        private readonly IWorkflowService _service;
         private readonly UrlHelper _urlHelper;
 
-        public ModelFactory(HttpRequestMessage request, IWorkboxService service)
+        public ModelFactory(HttpRequestMessage request, IWorkflowService service)
         {
             _service = service;
             _urlHelper = new UrlHelper(request);
+        }
+
+        public WorkboxModel CreateWorkboxModel(IWorkflow workflow)
+        {
+            var workflowId = FormatId(workflow.WorkflowID);
+
+            return new WorkboxModel
+            {
+                Name = workflow.Appearance.DisplayName,
+                Url = _urlHelper.Link("SchWorkflow", new { workflowId }),
+                States = new List<WorkboxStateModel>(
+                    _service.GetWorkflowStatesWithItems(workflowId)
+                    .Select(x => Create(workflowId, x)))
+            };
         }
 
         public WorkflowModel Create(IWorkflow workflow)
@@ -26,24 +40,19 @@ namespace Sitecore.Hypermedia.Model
             return new WorkflowModel
             {
                 Name = workflow.Appearance.DisplayName,
-                Links = new List<LinkModel>
-                {
-                    CreateLink(
-                        _urlHelper.Link(
-                            "SchWorkflow", new {workflowId}), "self")
-                },
+                Url = _urlHelper.Link("SchWorkflow", new { workflowId }),
                 States = new List<WorkflowStateModel>(
-                    _service.GetWorkflowStates(workflowId).Select(x => Create(workflow.WorkflowID, x)))
+                    _service.GetWorkflowStates(workflowId).Select(Create))
             };
         }
 
-        public WorkflowStateModel Create(string workflowId, WorkflowState workflowState)
+        public WorkboxStateModel Create(string workflowId, WorkflowState workflowState)
         {
             workflowId = FormatId(workflowId);
             var stateId = FormatId(workflowState.StateID);
             var stateLink = _urlHelper.Link("SchWorkflowState", new { workflowId, stateId });
 
-            var model = new WorkflowStateModel
+            var model = new WorkboxStateModel
             {
                 Name = workflowState.DisplayName,
                 FinalState = workflowState.FinalState,
@@ -54,6 +63,17 @@ namespace Sitecore.Hypermedia.Model
                 {
                     CreateLink(stateLink, "self")
                 }
+            };
+
+            return model;
+        }
+
+        public WorkflowStateModel Create(WorkflowState workflowState)
+        {
+            var model = new WorkflowStateModel
+            {
+                Name = workflowState.DisplayName,
+                FinalState = workflowState.FinalState
             };
 
             return model;

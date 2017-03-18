@@ -80,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\WorkflowControllerTest.cs" />
     <Compile Include="Controllers\WorkboxControllerTest.cs" />
     <Compile Include="DefaultHttpConfiguration.cs" />
     <Compile Include="Controllers\DefaultControllerTest.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="DefaultAutoDataAttribute.cs" />
     <Compile Include="Controllers\ItemWorkflowControllerTest.cs" />
     <Compile Include="EnLanguageCustomization.cs" />
+    <Compile Include="HttpRequestMessageCustomization.cs" />
     <Compile Include="InlineDefaultAutoDataAttribute.cs" />
     <Compile Include="DefaultUrlsEqualityComparer.cs" />
     <Compile Include="LinkModelEqualityComparer.cs" />
@@ -97,7 +99,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleWorkflow.cs" />
     <Compile Include="Services\ItemWorkflowServiceTest.cs" />
-    <Compile Include="Services\WorkboxServiceTest.cs" />
+    <Compile Include="Services\WorkflowServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Sitecore.Hypermedia\Sitecore.Hypermedia.csproj">
