@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Sitecore.Hypermedia.Controllers
 {
+    [RoutePrefix("api/sch/workbox")]
     public class WorkboxController : ApiController
     {
         private readonly IWorkboxService _service;
@@ -18,14 +19,14 @@ namespace Sitecore.Hypermedia.Controllers
 
         protected ModelFactory ModelFactory => _modelFactory ?? (_modelFactory = new ModelFactory(Request, _service));
 
-        [Route("api/wb")]
+        [Route("", Name = "SchWorkbox")]
         public IEnumerable<WorkflowModel> Get()
         {
             var workflows = _service.GetWorkflows();
             return workflows.Select(ModelFactory.Create);
         }
 
-        [Route("api/wb/{workflowId}", Name = "Workflow")]
+        [Route("{workflowId}", Name = "SchWorkflow")]
         public IHttpActionResult Get(string workflowId)
         {
             var workflow = _service.GetWorkflow(workflowId);
@@ -35,7 +36,7 @@ namespace Sitecore.Hypermedia.Controllers
             return Ok(ModelFactory.Create(workflow));
         }
 
-        [Route("api/wb/{workflowId}/states")]
+        [Route("{workflowId}/states")]
         public IHttpActionResult GetStates(string workflowId)
         {
             var workflowStates = _service.GetWorkflowStates(workflowId);
@@ -45,7 +46,7 @@ namespace Sitecore.Hypermedia.Controllers
             return Ok(workflowStates.Select(x => ModelFactory.Create(workflowId, x)));
         }
 
-        [Route("api/wb/{workflowId}/states/{stateId}", Name = "WorkflowState")]
+        [Route("{workflowId}/states/{stateId}", Name = "SchWorkflowState")]
         public IHttpActionResult GetStates(string workflowId, string stateId)
         {
             var workflowState = _service.GetWorkflowState(workflowId, stateId);
@@ -56,7 +57,7 @@ namespace Sitecore.Hypermedia.Controllers
         }
 
         [HttpPost]
-        [Route("api/wb/{workflowId}/states/{stateId}/commands/{commandId}", Name = "WorkflowCommand")]
+        [Route("{workflowId}/states/{stateId}/commands/{commandId}", Name = "SchWorkflowCommand")]
         public IHttpActionResult GetStates(string workflowId, string stateId, string commandId)
         {
             var workflowState = _service.GetWorkflowState(workflowId, stateId);

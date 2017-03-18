@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 
 namespace Sitecore.Hypermedia.Controllers
 {
+    [RoutePrefix("api/sch/items")]
     public class ItemWorkflowController : ApiController
     {
         private readonly IItemWorkflowService _service;
@@ -14,28 +16,20 @@ namespace Sitecore.Hypermedia.Controllers
             _service = service;
         }
 
-        [Route("api/items")]
-        public IHttpActionResult Get()
+        [Route("", Name = "SchItems")]
+        public IEnumerable<ItemModel> Get()
         {
-            var item = _service.GetContentItems();
-            if (item == null)
-                return NotFound();
-
-            return Ok(item);
+            return _service.GetContentItems();
         }
 
-        [Route("api/items/{itemId}", Name = "Item")]
-        public IHttpActionResult GetItem(Guid itemId)
+        [Route("{itemId}", Name = "SchItem")]
+        public ItemModel GetItem(Guid itemId)
         {
-            var item = _service.GetItem(itemId);
-            if (item == null)
-                return NotFound();
-
-            return Ok(item);
+            return _service.GetItem(itemId);
         }
 
         [HttpPatch]
-        [Route("api/items/{itemId}")]
+        [Route("{itemId}")]
         public IHttpActionResult UpdateTitle(ItemModel model)
         {
             var item = _service.GetItem(model.Id);
@@ -48,7 +42,7 @@ namespace Sitecore.Hypermedia.Controllers
         }
 
         [HttpPost]
-        [Route("api/items/{itemId}/workflow/{commandId}")]
+        [Route("{itemId}/workflow/{commandId}")]
         public IHttpActionResult ExecuteWorkflowCommand(
             Guid itemId, string commandId)
         {

@@ -160,10 +160,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\WorkboxController.cs" />
     <Compile Include="Converters\LinkModelConverter.cs" />
     <Compile Include="DependencyInjection\CustomServiceConfigurator.cs" />
     <Compile Include="Extensions\ServiceCollectionExtensions.cs" />
+    <Compile Include="Model\DefaultUrls.cs" />
     <Compile Include="Model\ItemModel.cs" />
     <Compile Include="Model\LinkModel.cs" />
     <Compile Include="Model\ItemWorkflowModel.cs" />

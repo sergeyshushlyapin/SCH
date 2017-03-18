@@ -30,7 +30,7 @@ namespace Sitecore.Hypermedia.Model
                 {
                     CreateLink(
                         _urlHelper.Link(
-                            "Workflow", new {workflowId}), "self")
+                            "SchWorkflow", new {workflowId}), "self")
                 },
                 States = new List<WorkflowStateModel>(
                     _service.GetWorkflowStates(workflowId).Select(x => Create(workflow.WorkflowID, x)))
@@ -41,7 +41,7 @@ namespace Sitecore.Hypermedia.Model
         {
             workflowId = FormatId(workflowId);
             var stateId = FormatId(workflowState.StateID);
-            var stateLink = _urlHelper.Link("WorkflowState", new { workflowId, stateId });
+            var stateLink = _urlHelper.Link("SchWorkflowState", new { workflowId, stateId });
 
             var model = new WorkflowStateModel
             {
@@ -71,7 +71,7 @@ namespace Sitecore.Hypermedia.Model
                 Version = uri.Version.Number,
                 Links = new List<LinkModel>
                 {
-                    CreateLink(_urlHelper.Link("Item", new {itemId = uri.ItemID.Guid}), "self")
+                    CreateLink(_urlHelper.Link("SchItem", new {itemId = uri.ItemID.Guid}), "self")
                 }
             };
 
@@ -81,7 +81,7 @@ namespace Sitecore.Hypermedia.Model
                 model.Links.Add(
                     CreateLink(
                         _urlHelper.Link(
-                            "WorkflowCommand",
+                            "SchWorkflowCommand",
                             new { workflowId, stateId, commandId }),
                         // TODO: Add command name
                         "execute",

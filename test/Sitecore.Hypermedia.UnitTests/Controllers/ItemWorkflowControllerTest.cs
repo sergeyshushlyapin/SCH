@@ -17,7 +17,7 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
         {
             var sut = new ItemWorkflowController(service);
             var result = sut.GetItem(itemId);
-            Assert.IsType<NotFoundResult>(result);
+            Assert.Null(result);
         }
 
         [Theory, DefaultAutoData]
@@ -30,8 +30,7 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
             service.GetItem(itemId).Returns(model);
             var sut = new ItemWorkflowController(service);
             var result = sut.GetItem(itemId);
-            Assert.Same(model,
-                ((OkNegotiatedContentResult<ItemModel>)result).Content);
+            Assert.Same(model, result);
         }
 
         [Theory, DefaultAutoData]
