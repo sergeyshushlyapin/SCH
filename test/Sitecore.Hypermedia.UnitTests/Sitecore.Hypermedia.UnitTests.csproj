@@ -80,17 +80,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ItemControllerTest.cs" />
     <Compile Include="Controllers\WorkflowControllerTest.cs" />
     <Compile Include="Controllers\WorkboxControllerTest.cs" />
     <Compile Include="DefaultHttpConfiguration.cs" />
     <Compile Include="Controllers\DefaultControllerTest.cs" />
     <Compile Include="DataUriCustomization.cs" />
     <Compile Include="DefaultAutoDataAttribute.cs" />
-    <Compile Include="Controllers\ItemWorkflowControllerTest.cs" />
+    <Compile Include="Controllers\SimpleItemControllerTest.cs" />
     <Compile Include="EnLanguageCustomization.cs" />
     <Compile Include="HttpRequestMessageCustomization.cs" />
     <Compile Include="InlineDefaultAutoDataAttribute.cs" />
     <Compile Include="DefaultUrlsEqualityComparer.cs" />
+    <Compile Include="ItemModelEqualityComparer.cs" />
+    <Compile Include="Services\ItemServiceTest.cs" />
+    <Compile Include="SimpleItemModelEqualityComparer.cs" />
     <Compile Include="LinkModelEqualityComparer.cs" />
     <Compile Include="Model\ModelFactoryTest.cs" />
     <Compile Include="Model\WorkflowModelTest.cs" />
@@ -98,8 +102,9 @@
     <Compile Include="NSubstituteForTypeCustomization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleWorkflow.cs" />
-    <Compile Include="Services\ItemWorkflowServiceTest.cs" />
+    <Compile Include="Services\SimpleItemServiceTest.cs" />
     <Compile Include="Services\WorkflowServiceTest.cs" />
+    <Compile Include="SimpleWorkflowModelEqualityComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Sitecore.Hypermedia\Sitecore.Hypermedia.csproj">

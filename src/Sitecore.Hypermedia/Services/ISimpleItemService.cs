@@ -4,13 +4,13 @@ using Sitecore.Hypermedia.Model;
 
 namespace Sitecore.Hypermedia.Services
 {
-    public interface IItemWorkflowService
+    public interface ISimpleItemService
     {
-        IEnumerable<ItemModel> GetContentItems();
+        IEnumerable<SimpleItemModel> GetContentItems();
 
-        ItemModel GetItem(Guid itemId);
+        SimpleItemModel GetItem(Guid itemId);
 
-        void Update(ItemModel model);
+        void Update(SimpleItemModel model);
 
         bool CanExecuteWorkflowCommand(Guid itemId, string commandId);
 

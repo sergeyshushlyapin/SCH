@@ -6,31 +6,31 @@ using Sitecore.Hypermedia.Services;
 
 namespace Sitecore.Hypermedia.Controllers
 {
-    [RoutePrefix("api/sch/items")]
-    public class ItemWorkflowController : ApiController
+    [RoutePrefix("api/items")]
+    public class SimpleItemsController : ApiController
     {
-        private readonly IItemWorkflowService _service;
+        private readonly ISimpleItemService _service;
 
-        public ItemWorkflowController(IItemWorkflowService service)
+        public SimpleItemsController(ISimpleItemService service)
         {
             _service = service;
         }
 
-        [Route("", Name = "SchItems")]
-        public IEnumerable<ItemModel> Get()
+        [Route("")]
+        public IEnumerable<SimpleItemModel> Get()
         {
             return _service.GetContentItems();
         }
 
-        [Route("{itemId}", Name = "SchItem")]
-        public ItemModel GetItem(Guid itemId)
+        [Route("{itemId}")]
+        public SimpleItemModel GetItem(Guid itemId)
         {
             return _service.GetItem(itemId);
         }
 
         [HttpPatch]
         [Route("{itemId}")]
-        public IHttpActionResult UpdateTitle(ItemModel model)
+        public IHttpActionResult UpdateTitle(SimpleItemModel model)
         {
             var item = _service.GetItem(model.Id);
             if (item == null)

@@ -161,29 +161,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\ItemsController.cs" />
     <Compile Include="Controllers\WorkboxController.cs" />
     <Compile Include="Controllers\WorkflowController.cs" />
     <Compile Include="Converters\LinkModelConverter.cs" />
     <Compile Include="DependencyInjection\CustomServiceConfigurator.cs" />
     <Compile Include="Extensions\ServiceCollectionExtensions.cs" />
     <Compile Include="Model\DefaultUrls.cs" />
+    <Compile Include="Model\SimpleItemModel.cs" />
     <Compile Include="Model\ItemModel.cs" />
     <Compile Include="Model\LinkModel.cs" />
-    <Compile Include="Model\ItemWorkflowModel.cs" />
+    <Compile Include="Model\SimpleWorkflowModel.cs" />
     <Compile Include="Model\ModelFactory.cs" />
     <Compile Include="Model\WorkflowItemModel.cs" />
     <Compile Include="Model\WorkboxStateModel.cs" />
     <Compile Include="Model\WorkboxModel.cs" />
     <Compile Include="Model\WorkflowStateModel.cs" />
     <Compile Include="Model\WorkflowModel.cs" />
-    <Compile Include="Services\IItemWorkflowService.cs" />
-    <Compile Include="Services\ItemWorkflowService.cs" />
+    <Compile Include="Services\IItemService.cs" />
+    <Compile Include="Services\ISimpleItemService.cs" />
+    <Compile Include="Services\ItemService.cs" />
+    <Compile Include="Services\SimpleItemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IWorkflowService.cs" />
     <Compile Include="Services\WorkflowService.cs" />
     <Compile Include="SimpleWebApi\Comment.cs" />
     <Compile Include="SimpleWebApi\PagesController.cs" />
-    <Compile Include="Controllers\ItemWorkflowController.cs" />
+    <Compile Include="Controllers\SimpleItemsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

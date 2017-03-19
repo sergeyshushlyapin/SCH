@@ -11,14 +11,14 @@ using Version = Sitecore.Data.Version;
 
 namespace Sitecore.Hypermedia.UnitTests.Services
 {
-    public class ItemWorkflowServiceTest
+    public class SimpleItemServiceTest
     {
         [Theory, DefaultAutoData]
         public void GetItemReturnsNullIfNotFound(
             Database database,
             Guid itemId)
         {
-            var sut = new ItemWorkflowService(database);
+            var sut = new SimpleItemService(database);
             var actual = sut.GetItem(itemId);
             Assert.Null(actual);
         }
@@ -38,8 +38,8 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             item.Name.Returns(name);
             item["Title"].Returns(title);
             database.GetItem(new ID(itemId)).Returns(item);
-            var sut = new ItemWorkflowService(database);
-            var expected = new ItemModel
+            var sut = new SimpleItemService(database);
+            var expected = new SimpleItemModel
             {
                 Id = item.ID.Guid,
                 Language = language.Name,
@@ -50,7 +50,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
 
             var actual = sut.GetItem(itemId);
 
-            Assert.Equal(expected, actual);
+            Assert.Equal(expected, actual, new SimpleItemModelEqualityComparer());
         }
 
         [Theory, DefaultAutoData]
@@ -70,8 +70,8 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             item.State.Returns(state);
             state.GetWorkflow().Returns(workflow);
             workflow.GetState(item).Returns(workflowState);
-            var sut = new ItemWorkflowService(database);
-            var expected = new ItemWorkflowModel
+            var sut = new SimpleItemService(database);
+            var expected = new SimpleWorkflowModel
             {
                 Id = workflow.WorkflowID,
                 Name = workflow.Appearance.DisplayName,
@@ -80,17 +80,17 @@ namespace Sitecore.Hypermedia.UnitTests.Services
                 FinalState = workflowState.FinalState
             };
 
-            var actual = sut.GetItem(itemId).ItemWorkflow;
+            var actual = sut.GetItem(itemId).Workflow;
 
-            Assert.Equal(expected, actual);
+            Assert.Equal(expected, actual, new SimpleWorkflowModelEqualityComparer());
         }
 
         [Theory, DefaultAutoData]
         public void UpdateThrowsIfNoItemFound(
             Database database,
-            ItemModel model)
+            SimpleItemModel model)
         {
-            var sut = new ItemWorkflowService(database);
+            var sut = new SimpleItemService(database);
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 sut.Update(model));
             Assert.Equal($"Item {model.Id} not found.", exception.Message);
@@ -102,7 +102,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
            Guid itemId,
            string commandId)
         {
-            var sut = new ItemWorkflowService(database);
+            var sut = new SimpleItemService(database);
             var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
             Assert.False(actual);
         }
@@ -115,7 +115,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             Item item)
         {
             database.GetItem(new ID(itemId)).Returns(item);
-            var sut = new ItemWorkflowService(database);
+            var sut = new SimpleItemService(database);
             var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
             Assert.False(actual);
         }
@@ -133,7 +133,7 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             item.State.Returns(state);
             state.GetWorkflow().Returns(workflow);
             workflow.GetCommands(item).Returns(new[] { command });
-            var sut = new ItemWorkflowService(database);
+            var sut = new SimpleItemService(database);
 
             var actual = sut.CanExecuteWorkflowCommand(
                 itemId, command.CommandID);

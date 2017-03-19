@@ -8,37 +8,37 @@ using Xunit;
 
 namespace Sitecore.Hypermedia.UnitTests.Controllers
 {
-    public class ItemWorkflowControllerTest
+    public class SimpleItemControllerTest
     {
         [Theory, DefaultAutoData]
         public void GetItemReturnsNotFoundIfNoItemFound(
-            IItemWorkflowService service,
+            ISimpleItemService service,
             Guid itemId)
         {
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
             var result = sut.GetItem(itemId);
             Assert.Null(result);
         }
 
         [Theory, DefaultAutoData]
         public void GetItemReturnsOkResultWithItemIfFound(
-            IItemWorkflowService service,
+            ISimpleItemService service,
             Guid itemId,
-            ItemModel model,
+            SimpleItemModel model,
             string name)
         {
             service.GetItem(itemId).Returns(model);
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
             var result = sut.GetItem(itemId);
             Assert.Same(model, result);
         }
 
         [Theory, DefaultAutoData]
         public void UpdateTitleReturnsNotFoundIfNoItemFound(
-            IItemWorkflowService service,
-            ItemModel model)
+            ISimpleItemService service,
+            SimpleItemModel model)
         {
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
             var result = sut.UpdateTitle(model);
             service.DidNotReceiveWithAnyArgs().Update(model);
             Assert.IsType<NotFoundResult>(result);
@@ -46,11 +46,11 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
 
         [Theory, DefaultAutoData]
         public void UpdateTitleReturnsOkIfItemFound(
-            IItemWorkflowService service,
-            ItemModel model)
+            ISimpleItemService service,
+            SimpleItemModel model)
         {
             service.GetItem(model.Id).Returns(model);
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
             var result = sut.UpdateTitle(model);
             service.Received().Update(model);
             Assert.IsType<OkResult>(result);
@@ -58,39 +58,39 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
 
         [Theory, DefaultAutoData]
         public void ExecuteWorkflowCommandReturnsNotFoundIfNoItemFound(
-            IItemWorkflowService service,
+            ISimpleItemService service,
             Guid itemId,
             string commandId)
         {
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
             var result = sut.ExecuteWorkflowCommand(itemId, commandId);
             Assert.IsType<NotFoundResult>(result);
         }
 
         [Theory, DefaultAutoData]
         public void ExecuteWorkflowCommandReturnsBadRequestIfCommandIsInvalid(
-            IItemWorkflowService service,
+            ISimpleItemService service,
             Guid itemId,
             string commandId,
-            ItemModel model)
+            SimpleItemModel model)
         {
             service.GetItem(itemId).Returns(model);
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
             var result = sut.ExecuteWorkflowCommand(itemId, commandId);
             Assert.IsType<BadRequestErrorMessageResult>(result);
         }
 
         [Theory, DefaultAutoData]
         public void ExecuteWorkflowCommandReturnsOkIfCommandIsExecuted(
-            IItemWorkflowService service,
+            ISimpleItemService service,
             Guid itemId,
             string commandId,
-            ItemModel model)
+            SimpleItemModel model)
         {
             service.GetItem(itemId).Returns(model);
             service.CanExecuteWorkflowCommand(itemId, commandId)
                 .Returns(true);
-            var sut = new ItemWorkflowController(service);
+            var sut = new SimpleItemsController(service);
 
             var result = sut.ExecuteWorkflowCommand(itemId, commandId);
 

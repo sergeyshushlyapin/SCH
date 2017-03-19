@@ -11,16 +11,16 @@ using Sitecore.SecurityModel;
 
 namespace Sitecore.Hypermedia.Services
 {
-    public class ItemWorkflowService : IItemWorkflowService
+    public class SimpleItemService : ISimpleItemService
     {
         private readonly Database _database;
 
-        public ItemWorkflowService(Database database)
+        public SimpleItemService(Database database)
         {
             _database = database;
         }
 
-        public IEnumerable<ItemModel> GetContentItems()
+        public IEnumerable<SimpleItemModel> GetContentItems()
         {
             return _database
                 .GetItem(ItemIDs.ContentRoot)
@@ -29,7 +29,7 @@ namespace Sitecore.Hypermedia.Services
                 .Select(ToItemModel);
         }
 
-        public ItemModel GetItem(Guid itemId)
+        public SimpleItemModel GetItem(Guid itemId)
         {
             var item = _database.GetItem(new ID(itemId));
             if (item == null)
@@ -40,9 +40,9 @@ namespace Sitecore.Hypermedia.Services
             return model;
         }
 
-        public void Update(ItemModel model)
+        public void Update(SimpleItemModel model)
         {
-            var item = this._database.GetItem(new ID(model.Id));
+            var item = _database.GetItem(new ID(model.Id));
             Assert.IsNotNull(item, $"Item {model.Id} not found.");
 
             // TODO: Remove UserSwitcher
@@ -81,9 +81,9 @@ namespace Sitecore.Hypermedia.Services
                 commandId, item, new StringDictionary(), false);
         }
 
-        private static ItemModel ToItemModel(Item item)
+        private static SimpleItemModel ToItemModel(Item item)
         {
-            var model = new ItemModel
+            var model = new SimpleItemModel
             {
                 Id = item.ID.Guid,
                 Language = item.Language.Name,
@@ -96,7 +96,7 @@ namespace Sitecore.Hypermedia.Services
             if (workflow != null)
             {
                 var state = workflow.GetState(item);
-                model.ItemWorkflow = new ItemWorkflowModel
+                model.Workflow = new SimpleWorkflowModel
                 {
                     Id = workflow.WorkflowID,
                     Name = workflow.Appearance.DisplayName,

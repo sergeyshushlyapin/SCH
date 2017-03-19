@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Routing;
 using Sitecore.Data;
+using Sitecore.Data.Items;
 using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 

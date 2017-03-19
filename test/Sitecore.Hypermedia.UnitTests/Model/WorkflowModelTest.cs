@@ -7,14 +7,14 @@ namespace Sitecore.Hypermedia.UnitTests.Model
     public class WorkflowModelTest
     {
         [Theory, AutoData]
-        public void EqualsWithNullReturnsFalse(ItemWorkflowModel sut)
+        public void EqualsWithNullReturnsFalse(SimpleWorkflowModel sut)
         {
             var result = sut.Equals(null);
             Assert.False(result);
         }
 
         [Theory, AutoData]
-        public void EqualsWithSameReturnsTrue(ItemWorkflowModel sut)
+        public void EqualsWithSameReturnsTrue(SimpleWorkflowModel sut)
         {
             var result = sut.Equals(sut);
             Assert.True(result);

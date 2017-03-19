@@ -9,8 +9,11 @@ namespace Sitecore.Hypermedia.Extensions
         public static IServiceCollection AddCustomServices(
             this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IItemWorkflowService>(x =>
-                new ItemWorkflowService(Factory.GetDatabase("master")));
+            serviceCollection.AddTransient<ISimpleItemService>(x =>
+             new SimpleItemService(Factory.GetDatabase("master")));
+
+            serviceCollection.AddTransient<IItemService>(x =>
+                new ItemService(Factory.GetDatabase("master")));
 
             serviceCollection.AddTransient<IWorkflowService>(x =>
                 new WorkflowService(Factory.GetDatabase("master")));
