@@ -105,6 +105,8 @@
     <Compile Include="Services\SimpleItemServiceTest.cs" />
     <Compile Include="Services\WorkflowServiceTest.cs" />
     <Compile Include="SimpleWorkflowModelEqualityComparer.cs" />
+    <Compile Include="WorkflowModelEqualityComparer.cs" />
+    <Compile Include="WorkflowStateModelEqualityComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Sitecore.Hypermedia\Sitecore.Hypermedia.csproj">

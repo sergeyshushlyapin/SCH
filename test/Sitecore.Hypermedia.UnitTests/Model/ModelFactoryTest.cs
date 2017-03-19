@@ -1,17 +1,13 @@
 ﻿using System.Linq;
 using System.Net.Http;
-using System.Web.Http.Routing;
 using NSubstitute;
 using Ploeh.AutoFixture.Xunit2;
 using Sitecore.Data;
-using Sitecore.Data.Items;
-using Sitecore.Globalization;
 using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 using Xunit;
 using static Sitecore.Hypermedia.Model.ModelFactory;
-using Version = Sitecore.Data.Version;
 
 namespace Sitecore.Hypermedia.UnitTests.Model
 {
@@ -59,44 +55,27 @@ namespace Sitecore.Hypermedia.UnitTests.Model
         }
 
         [Theory, DefaultAutoData]
-        public void CreateWorkflowModelReturnsName(
-            ModelFactory sut,
-            IWorkflow workflow,
-            string expected)
-        {
-            workflow.Appearance.DisplayName.Returns(expected);
-            var actual = sut.Create(workflow);
-            Assert.Equal(expected, actual.Name);
-        }
-
-        [Theory, DefaultAutoData]
-        public void CreateWorkflowModelReturnsWellFormattedHref(
+        public void CreateWorkflowModelReturnsValidWorkflowModel(
             HttpRequestMessage request,
             ModelFactory sut,
             IWorkflow workflow,
-            ID notFormattedWorkflowId,
-            string rel)
+            string name,
+                        ID notFormattedWorkflowId)
         {
+            workflow.Appearance.DisplayName.Returns(name);
             workflow.WorkflowID.Returns(notFormattedWorkflowId.ToString());
-            var wellFormattedWirkflowId = notFormattedWorkflowId.Guid;
-            var expected = $"{request.RequestUri}api/sch/workflows/{wellFormattedWirkflowId}";
-            var actual = sut.Create(workflow).Url;
-            Assert.Equal(expected, actual);
-        }
+            var wellFormattedWorkflowId = notFormattedWorkflowId.Guid;
 
-        [Theory, DefaultAutoData]
-        public void CreateWorkflowModelReturnsStatesWithItems(
-            [Frozen] IWorkflowService service,
-            ModelFactory sut,
-            IWorkflow workflow,
-            string workflowId,
-            WorkflowState[] states)
-        {
-            workflow.WorkflowID.Returns(workflowId);
-            service.GetWorkflowStates(workflowId)
-                .Returns(states);
+            var expected = new WorkflowModel
+            {
+                Name = name,
+                Url = $"{request.RequestUri}api/sch/workflows/{wellFormattedWorkflowId}",
+                States_Url = $"{request.RequestUri}api/sch/workflows/{wellFormattedWorkflowId}/states"
+            };
+
             var actual = sut.Create(workflow);
-            Assert.Equal(3, actual.States.Count);
+
+            Assert.Equal(expected, actual, new WorkflowModelEqualityComparer());
         }
 
         [Theory, DefaultAutoData]
@@ -111,8 +90,8 @@ namespace Sitecore.Hypermedia.UnitTests.Model
             bool finalState)
         {
             var state = new WorkflowState(notFormattedStateId.ToString(), displayName, icon, finalState);
-            var expected = $"{request.RequestUri}api/sch/workbox/{notFormattedWorkflowId.Guid}/states/{notFormattedStateId.Guid}";
-            var actual = sut.Create(notFormattedWorkflowId.ToString(), state).Links.Single().Href;
+            var expected = $"{request.RequestUri}api/sch/workflows/{notFormattedWorkflowId.Guid}/states/{notFormattedStateId.Guid}";
+            var actual = sut.CreateWorkboxState(notFormattedWorkflowId.ToString(), state).Links.Single().Href;
             Assert.Equal(expected, actual);
         }
 
@@ -127,8 +106,36 @@ namespace Sitecore.Hypermedia.UnitTests.Model
         {
             service.GetItemsInState(workflowId, state.StateID)
                 .Returns(items);
-            var actual = sut.Create(workflowId, state);
+            var actual = sut.CreateWorkboxState(workflowId, state);
             Assert.True(actual.Items.Count() == 3);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CreateWorkflowStateModelReturnsValidStateModel(
+            HttpRequestMessage request,
+            ModelFactory sut,
+            ID notFormattedWorkflowId,
+            ID notFormattedStateId,
+            string rel,
+            string displayName,
+            string icon,
+            bool finalState)
+        {
+            var state = new WorkflowState(notFormattedStateId.ToString(), displayName, icon, finalState);
+            var wellFormatterWorkflowId = notFormattedWorkflowId.Guid.ToString();
+            var expected = new WorkflowStateModel
+            {
+                Name = displayName,
+                FinalState = finalState,
+                Url = $"{request.RequestUri}api/sch/workflows/{wellFormatterWorkflowId}/states/{notFormattedStateId.Guid}",
+                Workflow_Url = $"{request.RequestUri}api/sch/workflows/{wellFormatterWorkflowId}"
+            };
+
+            var actual = sut.Create(notFormattedWorkflowId.ToString(), state);
+
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.Workflow_Url, actual.Workflow_Url);
+            Assert.Equal(expected, actual, new WorkflowStateModelEqualityComparer());
         }
 
         [Theory, DefaultAutoData]
@@ -157,7 +164,7 @@ namespace Sitecore.Hypermedia.UnitTests.Model
             string rel)
         {
             var expected = $"{request.RequestUri}api/sch/items/{dataUri.ItemID.Guid}";
-            var actual = sut.Create(dataUri, workflowId, stateId).Links.Single().Href;
+            var actual = sut.Create(dataUri, workflowId, stateId).Url;
             Assert.Equal(expected, actual);
         }
 
@@ -183,7 +190,7 @@ namespace Sitecore.Hypermedia.UnitTests.Model
 
             var actual = sut.Create(dataUri, workflowId, stateId);
 
-            Assert.Contains(expected, actual.Links, new LinkModelEqualityComparer());
+            Assert.Contains(expected, actual.Commands, new LinkModelEqualityComparer());
         }
     }
 }

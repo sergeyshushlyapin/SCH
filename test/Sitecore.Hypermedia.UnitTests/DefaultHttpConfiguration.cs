@@ -14,7 +14,8 @@ namespace Sitecore.Hypermedia.UnitTests
                     {"SchWorkbox", new HttpRoute("api/sch/workbox")},
                     {"SchWorkflows", new HttpRoute("api/sch/workflows")},
                     {"SchWorkflow", new HttpRoute("api/sch/workflows/{workflowId}")},
-                    {"SchWorkflowState", new HttpRoute("api/sch/workbox/{workflowId}/states/{stateId}")},
+                    {"SchWorkflowStates", new HttpRoute("api/sch/workflows/{workflowId}/states")},
+                    {"SchWorkflowState", new HttpRoute("api/sch/workflows/{workflowId}/states/{stateId}")},
                     {"SchWorkflowCommand", new HttpRoute("api/sch/workbox/{workflowId}/states/{stateId}/commands/{commandId}")}
                 })
         {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Sitecore.Hypermedia.Model
+﻿namespace Sitecore.Hypermedia.Model
 {
     public class WorkflowModel
     {
@@ -8,6 +6,6 @@ namespace Sitecore.Hypermedia.Model
 
         public string Url { get; set; }
 
-        public ICollection<WorkflowStateModel> States { get; set; }
+        public string States_Url { get; set; }
     }
 }

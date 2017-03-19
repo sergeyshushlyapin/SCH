@@ -59,5 +59,30 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
             var result = sut.Get(workflowId);
             Assert.IsType<OkNegotiatedContentResult<WorkflowModel>>(result);
         }
+
+        [Theory, DefaultAutoData]
+        public void GetStatesReturnsEmptyListIfNoStatesFound(
+            IWorkflowService service,
+            string workflowId)
+        {
+            service.GetWorkflowStates(workflowId)
+                .ReturnsForAnyArgs(Arg.Any<IEnumerable<WorkflowState>>());
+            var sut = new WorkflowController(service);
+            var result = sut.GetStates(workflowId);
+            Assert.Empty(result);
+        }
+
+        [Theory, DefaultAutoData]
+        public void GetStatesReturnsValidStatesIfFound(
+            HttpRequestMessage request,
+            IWorkflowService service,
+            string workflowId,
+            IEnumerable<WorkflowState> states)
+        {
+            service.GetWorkflowStates(workflowId).Returns(states);
+            var sut = new WorkflowController(service) { Request = request };
+            var actual = sut.GetStates(workflowId);
+            Assert.Equal(3, actual.Count());
+        }
     }
 }
