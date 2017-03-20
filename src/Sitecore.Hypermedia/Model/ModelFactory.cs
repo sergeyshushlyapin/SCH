@@ -55,7 +55,7 @@ namespace Sitecore.Hypermedia.Model
             {
                 Name = workflowState.DisplayName,
                 FinalState = workflowState.FinalState,
-                Items = new List<WorkflowItemModel>(
+                Items = new List<WorkboxItemModel>(
                     _service.GetItemsInState(workflowId, workflowState.StateID)
                         .Select(x => Create(x, workflowId, stateId))),
                 Links = new List<LinkModel>
@@ -84,29 +84,27 @@ namespace Sitecore.Hypermedia.Model
             return model;
         }
 
-        public WorkflowItemModel Create(DataUri uri, string workflowId, string stateId)
+        public WorkboxItemModel Create(DataUri uri, string workflowId, string stateId)
         {
             workflowId = FormatId(workflowId);
             stateId = FormatId(stateId);
 
-            var model = new WorkflowItemModel
+            var itemId = uri.ItemID.Guid;
+            var model = new WorkboxItemModel
             {
                 Name = _service.GetItemName(uri.ItemID),
-                Url = _urlHelper.Link(
-                    "SchItem", new { itemId = uri.ItemID.Guid }),
+                Url = _urlHelper.Link("SchItem", new { itemId }),
                 Commands = new List<LinkModel>()
             };
 
-            var commands = _service.GetAllowedCommands(stateId);
-            foreach (var commandId in commands)
+            var commands = _service.GetAllowedCommands(workflowId, stateId);
+            foreach (var command in commands)
             {
+                var commandId = FormatId(command.CommandID);
                 model.Commands.Add(
                     CreateLink(
-                        _urlHelper.Link(
-                            "SchWorkflowCommand",
-                            new { workflowId, stateId, commandId }),
-                        // TODO: Add command name
-                        "execute",
+                        _urlHelper.Link("SchWorkboxCommand", new { itemId, commandId }),
+                        command.DisplayName,
                         "POST"));
             }
 

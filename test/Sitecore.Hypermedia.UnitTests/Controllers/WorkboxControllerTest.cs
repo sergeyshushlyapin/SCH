@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
+using System.Web.Http.Results;
 using NSubstitute;
 using Sitecore.Hypermedia.Controllers;
 using Sitecore.Hypermedia.Services;
@@ -28,12 +31,38 @@ namespace Sitecore.Hypermedia.UnitTests.Controllers
           IEnumerable<IWorkflow> workflows)
         {
             service.GetWorkflows().Returns(workflows);
-            request.SetConfiguration(new DefaultHttpConfiguration());
             var sut = new WorkboxController(service) { Request = request };
-
             var result = sut.Get();
-
             Assert.True(result.ToList().Count == 3);
+        }
+
+        [Theory, DefaultAutoData]
+        public void ExecuteWorkflowCommandReturnsBadRequestIfCommandNotAllowed(
+          IWorkflowService service,
+          HttpRequestMessage request,
+          IEnumerable<IWorkflow> workflows,
+          Guid itemId,
+          string commandId)
+        {
+            var sut = new WorkboxController(service) { Request = request };
+            var result = sut.ExecuteWorkflowCommand(itemId, commandId);
+            Assert.IsType<BadRequestResult>(result);
+        }
+
+        [Theory, DefaultAutoData]
+        public void ExecuteWorkflowCommandExecutesCommandAndReturnsOk(
+          IWorkflowService service,
+          HttpRequestMessage request,
+          IEnumerable<IWorkflow> workflows,
+          Guid itemId,
+          string commandId)
+        {
+            service.CanExecuteWorkflowCommand(itemId, commandId)
+                .Returns(true);
+            var sut = new WorkboxController(service) { Request = request };
+            var result = sut.ExecuteWorkflowCommand(itemId, commandId);
+            service.Received().ExecuteWorkflowCommand(itemId, commandId);
+            Assert.IsType<OkResult>(result);
         }
     }
 }

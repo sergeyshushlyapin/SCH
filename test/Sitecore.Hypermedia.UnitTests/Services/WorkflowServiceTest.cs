@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NSubstitute;
 using Ploeh.AutoFixture.Xunit2;
 using Sitecore.Data;
@@ -197,27 +198,119 @@ namespace Sitecore.Hypermedia.UnitTests.Services
         }
 
         [Theory, DefaultAutoData]
-        public void GetAllowedCommandsReturnsEmptyListIfStateIsNotGuid(
+        public void GetAllowedCommandsThrowsIfNoWorkflowFound(
+            [Frozen] Database database,
             WorkflowService sut,
             string workflowId,
-            string workflowStateId)
+            string stateId)
         {
-            var actual = sut.GetAllowedCommands(workflowStateId);
+            database.WorkflowProvider.GetWorkflow(workflowId)
+                .Returns(Arg.Any<IWorkflow>());
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                sut.GetAllowedCommands(workflowId, stateId));
+            Assert.Equal($"Workflow '{workflowId}' not found.", ex.Message);
+        }
+
+        [Theory, DefaultAutoData]
+        public void GetAllowedCommandsReturnsEmptyListIfNoCommandsFound(
+            [Frozen] Database database,
+            WorkflowService sut,
+            string workflowId,
+            string stateId,
+            IWorkflow workflow)
+        {
+            database.WorkflowProvider.GetWorkflow(workflowId)
+                .Returns(workflow);
+            var actual = sut.GetAllowedCommands(workflowId, stateId);
             Assert.Empty(actual);
         }
 
-        [Theory]
-        [InlineDefaultAutoData(SampleWorkflow.DraftStateId, "cf6a557d-0b86-4432-bf47-302a18238e74")]
-        [InlineDefaultAutoData(SampleWorkflow.AwaitingApprovalStateId, "f744cc9c-4bb1-4b38-8d5c-1e9ce7f45d2d|e44f2d64-1eed-42ff-a7da-c07b834096ac")]
-        [InlineDefaultAutoData("{11111111-1111-1111-1111-111111111111}", "")]
-        public void GetAllowedCommandsReturnsCommandIds(
-            string workflowStateId,
-            string expected,
+        [Theory, DefaultAutoData]
+        public void GetAllowedCommandsReturnsCommandsIfFound(
+            [Frozen] Database database,
             WorkflowService sut,
-            string workflowId)
+            string workflowId,
+            string stateId,
+            IWorkflow workflow,
+            WorkflowCommand[] expected)
         {
-            var actual = sut.GetAllowedCommands(workflowStateId);
-            Assert.Equal(expected, string.Join("|", actual));
+            database.WorkflowProvider.GetWorkflow(workflowId)
+                .Returns(workflow);
+            workflow.GetCommands(stateId).Returns(expected);
+            var actual = sut.GetAllowedCommands(workflowId, stateId);
+            Assert.Same(expected, actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsFalseIfStateIsNotValid(
+            [Frozen] Database database,
+            WorkflowService sut,
+            Guid itemId,
+            string commandId)
+        {
+            var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
+            Assert.False(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsFalseIfNoWorkflowFound(
+            [Frozen] Database database,
+            WorkflowService sut,
+            Guid itemId,
+            string commandId,
+            Item item)
+        {
+            database.GetItem(new ID(itemId)).Returns(item);
+            var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
+            Assert.False(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsTrueIfStateIsValid(
+            [Frozen] Database database,
+            WorkflowService sut,
+            Guid itemId,
+            Item item,
+            ItemState state,
+            IWorkflow workflow,
+            WorkflowCommand command)
+        {
+            database.GetItem(new ID(itemId)).Returns(item);
+            item.State.Returns(state);
+            state.GetWorkflow().Returns(workflow);
+            workflow.GetCommands(item).Returns(new[] { command });
+
+            var actual = sut.CanExecuteWorkflowCommand(
+                itemId, command.CommandID);
+
+            Assert.True(actual);
+        }
+
+        [Theory, DefaultAutoData]
+        public void CanExecuteWorkflowCommandReturnsTrueIfStateIsValidAndCommandIdIsFormatted(
+            [Frozen] Database database,
+            WorkflowService sut,
+            Guid itemId,
+            Item item,
+            ItemState state,
+            IWorkflow workflow,
+            WorkflowCommand command,
+            ID notFormattedCommandId,
+            string name)
+        {
+            database.GetItem(new ID(itemId)).Returns(item);
+            item.State.Returns(state);
+            state.GetWorkflow().Returns(workflow);
+            workflow.GetCommands(item).Returns(new[]
+            {
+                new WorkflowCommand(notFormattedCommandId.ToString(), name, "icon", false),
+            });
+            var formattedCommandId = notFormattedCommandId.Guid;
+
+            var actual = sut.CanExecuteWorkflowCommand(
+                itemId, formattedCommandId.ToString());
+
+            Assert.True(actual);
         }
     }
 }

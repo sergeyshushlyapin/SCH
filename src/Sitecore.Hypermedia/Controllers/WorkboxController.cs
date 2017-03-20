@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Http;
 using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
@@ -27,14 +28,16 @@ namespace Sitecore.Hypermedia.Controllers
         }
 
         [HttpPost]
-        [Route("{workflowId}/states/{stateId}/commands/{commandId}", Name = "SchWorkflowCommand")]
-        public IHttpActionResult ExecuteWorkflowCommand(string workflowId, string stateId, string commandId)
+        [Route("{itemId}/{commandId}", Name = "SchWorkboxCommand")]
+        public IHttpActionResult ExecuteWorkflowCommand(
+            Guid itemId, string commandId)
         {
-            var workflowState = _service.GetWorkflowState(workflowId, stateId);
-            if (workflowState == null)
-                return NotFound();
+            if (!_service.CanExecuteWorkflowCommand(itemId, commandId))
+                return BadRequest();
 
-            return Ok(ModelFactory.Create(workflowId, workflowState));
+            _service.ExecuteWorkflowCommand(itemId, commandId);
+
+            return Ok();
         }
     }
 }

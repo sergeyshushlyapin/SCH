@@ -12,11 +12,11 @@ namespace Sitecore.Hypermedia.UnitTests
                     {"SchItems", new HttpRoute("api/sch/items")},
                     {"SchItem", new HttpRoute("api/sch/items/{itemId}")},
                     {"SchWorkbox", new HttpRoute("api/sch/workbox")},
+                    {"SchWorkboxCommand", new HttpRoute("api/sch/workbox/{itemId}/{commandId}")},
                     {"SchWorkflows", new HttpRoute("api/sch/workflows")},
                     {"SchWorkflow", new HttpRoute("api/sch/workflows/{workflowId}")},
                     {"SchWorkflowStates", new HttpRoute("api/sch/workflows/{workflowId}/states")},
-                    {"SchWorkflowState", new HttpRoute("api/sch/workflows/{workflowId}/states/{stateId}")},
-                    {"SchWorkflowCommand", new HttpRoute("api/sch/workbox/{workflowId}/states/{stateId}/commands/{commandId}")}
+                    {"SchWorkflowState", new HttpRoute("api/sch/workflows/{workflowId}/states/{stateId}")}
                 })
         {
         }

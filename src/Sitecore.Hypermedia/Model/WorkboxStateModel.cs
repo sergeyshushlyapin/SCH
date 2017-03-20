@@ -8,7 +8,7 @@ namespace Sitecore.Hypermedia.Model
 
         public bool FinalState { get; set; }
 
-        public IEnumerable<WorkflowItemModel> Items { get; set; }
+        public IEnumerable<WorkboxItemModel> Items { get; set; }
 
         public ICollection<LinkModel> Links { get; set; }
     }

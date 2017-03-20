@@ -1,5 +1,6 @@
 ﻿using System;
 using NSubstitute;
+using Ploeh.AutoFixture.Xunit2;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -15,17 +16,18 @@ namespace Sitecore.Hypermedia.UnitTests.Services
     {
         [Theory, DefaultAutoData]
         public void GetItemReturnsNullIfNotFound(
-            Database database,
+            [Frozen] Database database,
+            SimpleItemService sut,
             Guid itemId)
         {
-            var sut = new SimpleItemService(database);
             var actual = sut.GetItem(itemId);
             Assert.Null(actual);
         }
 
         [Theory, DefaultAutoData]
         public void GetItemReturnsValidItemModelIfFound(
-            Database database,
+            [Frozen] Database database,
+            SimpleItemService sut,
             Guid itemId,
             Item item,
             Language language,
@@ -38,7 +40,6 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             item.Name.Returns(name);
             item["Title"].Returns(title);
             database.GetItem(new ID(itemId)).Returns(item);
-            var sut = new SimpleItemService(database);
             var expected = new SimpleItemModel
             {
                 Id = item.ID.Guid,
@@ -55,7 +56,8 @@ namespace Sitecore.Hypermedia.UnitTests.Services
 
         [Theory, DefaultAutoData]
         public void GetItemReturnsValidItemModeWithWorkflowlIfFound(
-            Database database,
+            [Frozen] Database database,
+            SimpleItemService sut,
             Guid itemId,
             Item item,
             Language language,
@@ -70,7 +72,6 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             item.State.Returns(state);
             state.GetWorkflow().Returns(workflow);
             workflow.GetState(item).Returns(workflowState);
-            var sut = new SimpleItemService(database);
             var expected = new SimpleWorkflowModel
             {
                 Id = workflow.WorkflowID,
@@ -87,10 +88,10 @@ namespace Sitecore.Hypermedia.UnitTests.Services
 
         [Theory, DefaultAutoData]
         public void UpdateThrowsIfNoItemFound(
-            Database database,
+            [Frozen] Database database,
+            SimpleItemService sut,
             SimpleItemModel model)
         {
-            var sut = new SimpleItemService(database);
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 sut.Update(model));
             Assert.Equal($"Item {model.Id} not found.", exception.Message);
@@ -98,31 +99,31 @@ namespace Sitecore.Hypermedia.UnitTests.Services
 
         [Theory, DefaultAutoData]
         public void CanExecuteWorkflowCommandReturnsFalseIfStateIsNotValid(
-           Database database,
-           Guid itemId,
-           string commandId)
+            [Frozen] Database database,
+            SimpleItemService sut,
+            Guid itemId,
+            string commandId)
         {
-            var sut = new SimpleItemService(database);
             var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
             Assert.False(actual);
         }
 
         [Theory, DefaultAutoData]
         public void CanExecuteWorkflowCommandReturnsFalseIfNoWorkflowFound(
-            Database database,
-            Guid itemId,
+            [Frozen] Database database,
+            SimpleItemService sut, Guid itemId,
             string commandId,
             Item item)
         {
             database.GetItem(new ID(itemId)).Returns(item);
-            var sut = new SimpleItemService(database);
             var actual = sut.CanExecuteWorkflowCommand(itemId, commandId);
             Assert.False(actual);
         }
 
         [Theory, DefaultAutoData]
         public void CanExecuteWorkflowCommandReturnsTrueIfStateIsValid(
-            Database database,
+            [Frozen] Database database,
+            SimpleItemService sut,
             Guid itemId,
             Item item,
             ItemState state,
@@ -133,7 +134,6 @@ namespace Sitecore.Hypermedia.UnitTests.Services
             item.State.Returns(state);
             state.GetWorkflow().Returns(workflow);
             workflow.GetCommands(item).Returns(new[] { command });
-            var sut = new SimpleItemService(database);
 
             var actual = sut.CanExecuteWorkflowCommand(
                 itemId, command.CommandID);

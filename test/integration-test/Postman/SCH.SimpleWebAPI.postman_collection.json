@@ -111,6 +111,17 @@
 			]
 		},
 		{
+			"name": "Sitecore Hypermedia",
+			"request": {
+				"url": "http://{{host}}/api/sch",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "Get pages",
 			"request": {
 				"url": "http://{{host}}/api/pages",

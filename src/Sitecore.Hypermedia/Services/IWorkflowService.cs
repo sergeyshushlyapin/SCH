@@ -15,13 +15,15 @@ namespace Sitecore.Hypermedia.Services
 
         IEnumerable<WorkflowState> GetWorkflowStatesWithItems(string workflowId);
 
-        WorkflowState GetWorkflowState(string workflowId, string workflowStateId);
+        WorkflowState GetWorkflowState(string workflowId, string stateId);
 
-        IEnumerable<DataUri> GetItemsInState(string workflowId, string workflowStateId);
+        IEnumerable<DataUri> GetItemsInState(string workflowId, string stateId);
 
         string GetItemName(ID id);
 
-        IEnumerable<Guid> GetAllowedCommands(string workflowStateId);
+        IEnumerable<WorkflowCommand> GetAllowedCommands(string workflowId, string stateId);
+
+        bool CanExecuteWorkflowCommand(Guid itemId, string commandId);
 
         void ExecuteWorkflowCommand(Guid itemId, string commandId);
     }

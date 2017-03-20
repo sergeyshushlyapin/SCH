@@ -93,6 +93,7 @@
     <Compile Include="InlineDefaultAutoDataAttribute.cs" />
     <Compile Include="DefaultUrlsEqualityComparer.cs" />
     <Compile Include="ItemModelEqualityComparer.cs" />
+    <Compile Include="WorkboxItemModelEqualityComparer.cs" />
     <Compile Include="Services\ItemServiceTest.cs" />
     <Compile Include="SimpleItemModelEqualityComparer.cs" />
     <Compile Include="LinkModelEqualityComparer.cs" />

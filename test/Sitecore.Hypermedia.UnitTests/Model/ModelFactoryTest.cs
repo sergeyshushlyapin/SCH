@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using NSubstitute;
 using Ploeh.AutoFixture.Xunit2;
@@ -7,7 +8,6 @@ using Sitecore.Hypermedia.Model;
 using Sitecore.Hypermedia.Services;
 using Sitecore.Workflows;
 using Xunit;
-using static Sitecore.Hypermedia.Model.ModelFactory;
 
 namespace Sitecore.Hypermedia.UnitTests.Model
 {
@@ -168,29 +168,45 @@ namespace Sitecore.Hypermedia.UnitTests.Model
             Assert.Equal(expected, actual);
         }
 
-        [Theory]
-        [InlineDefaultAutoData(SampleWorkflow.DraftStateId)]
-        //[InlineDefaultAutoData(SampleWorkflow.AwaitingApprovalStateId)]
+        [Theory, DefaultAutoData]
         public void CreateWorkflowItemModelReturnsSubmitItemLink(
-            string stateId,
-            string workflowId,
             HttpRequestMessage request,
-            [Frozen(Matching.ImplementedInterfaces)] WorkflowService service,
+            [Frozen] IWorkflowService service,
             ModelFactory sut,
+            string workflowId,
+            string stateId,
             DataUri dataUri,
+            string itemName,
+            ID commandId,
+            string commandName,
+            string icon,
+            bool hasUi,
             string rel)
         {
-            var commandId = service.GetAllowedCommands(stateId).First();
-            var expected = new LinkModel
+            service.GetItemName(dataUri.ItemID).Returns(itemName);
+            service.GetAllowedCommands(workflowId, stateId)
+                .Returns(new[]
+                {
+                    new WorkflowCommand(commandId.ToString(), commandName, icon, hasUi),
+                });
+
+            var itemId = dataUri.ItemID.Guid;
+            var expectedCommandId = commandId.Guid;
+            var expected = new WorkboxItemModel
             {
-                Href = $"{request.RequestUri}api/sch/workbox/{FormatId(workflowId)}/states/{FormatId(stateId)}/commands/{commandId}",
-                Rel = "execute",
-                Method = "POST"
+                Name = itemName,
+                Url = $"{request.RequestUri}api/sch/items/{itemId}",
+                Commands = new List<LinkModel> { new LinkModel
+                {
+                    Href = $"{request.RequestUri}api/sch/workbox/{itemId}/{expectedCommandId}",
+                    Rel = commandName,
+                    Method = "POST"
+                }}
             };
 
             var actual = sut.Create(dataUri, workflowId, stateId);
 
-            Assert.Contains(expected, actual.Commands, new LinkModelEqualityComparer());
+            Assert.Equal(expected, actual, new WorkboxItemModelEqualityComparer());
         }
     }
 }

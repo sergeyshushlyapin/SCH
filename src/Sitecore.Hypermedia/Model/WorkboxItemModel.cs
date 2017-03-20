@@ -2,7 +2,7 @@
 
 namespace Sitecore.Hypermedia.Model
 {
-    public class WorkflowItemModel
+    public class WorkboxItemModel
     {
         public string Name { get; set; }
 

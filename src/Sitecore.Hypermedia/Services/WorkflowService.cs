@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Sitecore.Collections;
 using Sitecore.Data;
+using Sitecore.Hypermedia.Model;
+using Sitecore.SecurityModel;
 using Sitecore.Workflows;
 
 namespace Sitecore.Hypermedia.Services
@@ -59,28 +61,18 @@ namespace Sitecore.Hypermedia.Services
             return this._database.GetItem(id)?.Name;
         }
 
-        public IEnumerable<Guid> GetAllowedCommands(string workflowStateId)
+        public IEnumerable<WorkflowCommand> GetAllowedCommands(
+            string workflowId,
+            string stateId)
         {
-            ID stateId;
-            if (!ID.TryParse(workflowStateId, out stateId))
-                return Enumerable.Empty<Guid>();
+            var workflow = GetWorkflow(workflowId);
+            if (workflow == null)
+                throw new InvalidOperationException($"Workflow '{workflowId}' not found.");
 
-            const string draftStateId = "{190B1C84-F1BE-47ED-AA41-F42193D9C8FC}";
-            const string awaitingApprovalStateId = "{46DA5376-10DC-4B66-B464-AFDAA29DE84F}";
-            var submitCommandId = new Guid("{CF6A557D-0B86-4432-BF47-302A18238E74}");
-            var approveCommandId = new Guid("{F744CC9C-4BB1-4B38-8D5C-1E9CE7F45D2D}");
-            var rejectCommandId = new Guid("{E44F2D64-1EED-42FF-A7DA-C07B834096AC}");
-
-            switch (stateId.ToString())
+            using (new SecurityDisabler())
             {
-                case draftStateId:
-                    return new[] { submitCommandId };
-
-                case awaitingApprovalStateId:
-                    return new[] { approveCommandId, rejectCommandId };
-
-                default:
-                    return Enumerable.Empty<Guid>();
+                return workflow.GetCommands(stateId)
+                       ?? Enumerable.Empty<WorkflowCommand>();
             }
         }
 
@@ -91,5 +83,29 @@ namespace Sitecore.Hypermedia.Services
             workflow.Execute(
                 commandId, item, new StringDictionary(), false);
         }
+
+        public bool CanExecuteWorkflowCommand(Guid itemId, string commandId)
+        {
+            commandId = ModelFactory.FormatId(commandId);
+
+            // TODO: Remove SecurityDisabler
+            using (new SecurityDisabler())
+            {
+                var item = _database.GetItem(new ID(itemId));
+                var workflow = item?.State?.GetWorkflow();
+                if (workflow == null)
+                    return false;
+
+                return workflow.GetCommands(item)
+                    .Any(c => ModelFactory.FormatId(c.CommandID).Equals(
+                        commandId, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+    }
+
+    public class WorkflowCommandModel
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
     }
 }
